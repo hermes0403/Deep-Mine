@@ -70,7 +70,7 @@ textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px soli
 <div id="st" class="note" style="margin:0 0 8px">連線中…</div>
 <div id="menu" style="display:none"><button class="b" id="bLogin">登入帳號</button><button class="b s" id="bReg">註冊新帳號</button></div>
 <div id="lg" style="display:none"><div class="note" style="color:var(--tx)">登入現有帳號</div><input id="ln" placeholder="玩家名稱" maxlength="12"><input id="lp" type="password" placeholder="密碼"><button class="b" id="bLoginGo">登入</button><button class="b s" id="bBack1">返回</button></div>
-<div id="reg" style="display:none"><div class="note" style="color:var(--tx)">註冊新帳號</div><input id="rn" placeholder="玩家名稱（2–12 字）" maxlength="12"><input id="rp" type="password" placeholder="密碼（至少 4 碼）"><input id="rp2" type="password" placeholder="確認密碼"><textarea id="imp" rows="2" placeholder="匯入存檔碼（選填）"></textarea><button class="b" id="bRegGo">註冊並進入遊戲</button><button class="b s" id="bBack">返回</button></div>
+<div id="reg" style="display:none"><div class="note" style="color:var(--tx)">註冊新帳號</div><input id="rn" placeholder="玩家名稱（2–12 字）" maxlength="12"><input id="rp" type="password" placeholder="密碼（至少 4 碼）"><input id="rp2" type="password" placeholder="確認密碼"><textarea id="imp" style="display:none" rows="2" placeholder="匯入存檔碼（選填）"></textarea><button class="b" id="bRegGo">註冊並進入遊戲</button><button class="b s" id="bBack">返回</button></div>
 <div id="msg" class="msg"></div>
 <button class="b s" id="bOff" style="display:none">離線試玩（不存檔）</button>
 <div class="note" id="n1"></div><div class="note">請牢記你的玩家名稱</div>
@@ -335,7 +335,7 @@ $('cx').onclick=()=>{ const f=profile.found||{}; $('cxc').textContent='已發現
     const t=two(k?c[1]:'？？？',k?c[2]+'・'+c[3].toLocaleString()+' 金':'未發現'); if(k) t.firstChild.parentNode.querySelector('small').style.color=RC[c[2]]; r.append(sw,t); l.append(r); }); $('cxp').style.display='flex'; };
 $('tr').onclick=()=>{ const p=profile,l=$('trl'); l.innerHTML=''; const row=(a,b)=>{ const r=document.createElement('div'); r.className='row'; const x=document.createElement('span'); x.textContent=a; const y=document.createElement('span'); y.textContent=b; r.append(x,y); l.append(r); };
   row('累積挖掘次數',(p.hits||0)); row('累積取得礦物',(p.mined||0)); row('累積出售金額',(p.sold||0).toLocaleString()+' 金'); row('已發現礦物',Object.keys(p.found||{}).length+' / 12'); row('最深深度',(p.maxDepth||0)+' m'); row('古代遺物',Object.keys(p.relics||{}).length+' / '+RL.length); row('已解鎖區域',(1+Object.keys(p.zones||{}).length)+' / 4');
-  const h=document.createElement('div'); h.className='note'; h.style.margin='10px 0 2px'; h.textContent='成就'; l.append(h); ACH.forEach(a=>row((p.ach&&p.ach[a[0]]?'✅ ':'⬜ ')+a[1],'')); const eb=document.createElement('button'); eb.className='b s'; eb.textContent='匯出存檔碼'; eb.onclick=exportSave; l.append(eb); $('trp').style.display='flex'; };
+  const h=document.createElement('div'); h.className='note'; h.style.margin='10px 0 2px'; h.textContent='成就'; l.append(h); ACH.forEach(a=>row((p.ach&&p.ach[a[0]]?'✅ ':'⬜ ')+a[1],'')); const eb=document.createElement('button'); eb.className='b s'; eb.textContent='匯出存檔碼'; eb.onclick=exportSave; if(profile.name==='Hermes') l.append(eb); $('trp').style.display='flex'; };
 ['bagp','admp','shopp','cxp','trp','zonp'].forEach(i=>{ const sc=$(i); const x=document.createElement('button'); x.className='x'; x.textContent='✕'; x.onclick=()=>sc.style.display='none'; sc.firstElementChild.prepend(x); sc.addEventListener('click',e=>{ if(e.target===sc) sc.style.display='none'; }); });
 function askPw(){ return new Promise(res=>{ const p=$('pwp'); $('pwi').value=''; $('pwm').textContent=''; p.style.display='flex'; const done=v=>{ p.style.display='none'; res(v); };
   $('pwok').onclick=()=>{ if($('pwi').value==='2468') done(true); else $('pwm').textContent='密碼錯誤'; }; $('pwno').onclick=()=>done(false); }); }
@@ -383,7 +383,7 @@ $('bRegGo').onclick=async()=>{ const n=$('rn').value.trim();
   await remind(); startGame(); };
 async function boot2(){
   try{ if(window.claude){ db=await claude.use('db'); const u=await claude.use('user'); if(u){ uid=await u.id(); isAdmin=await u.isOwner(); } } }catch(e){}
-  $('bOff').style.display='block'; localMode=!(db&&uid); ['lp','rp','rp2','imp'].forEach(i=>$(i).style.display=localMode?'block':'none');
+  $('bOff').style.display='block'; localMode=!(db&&uid); ['lp','rp','rp2'].forEach(i=>$(i).style.display=localMode?'block':'none');
   if(localMode){ $('st').textContent='本機帳號'; $('n1').textContent='帳號只存在這台裝置'; }
   else{ $('n1').textContent='存檔綁定 Claude 登入帳號'; try{ const sn=await pdoc().get(); if(sn.exists) cloudProfile=JSON.parse(JSON.stringify(sn.data())); $('st').textContent=cloudProfile?'找到存檔：'+cloudProfile.name:'雲端存檔已連線'; }catch(e){ $('st').textContent='讀取失敗，請重新整理'; return; } }
   showForm('menu'); }
@@ -402,5 +402,6 @@ function impProfile(n){ const v=$('imp').value.trim(); if(!v) return mkProfile(n
   if(!o||typeof o!=='object'||!Number.isFinite(o.coins)) throw new Error('bad'); delete o.lastGrant; return Object.assign(mkProfile(n),o,{name:n}); }
 function exportSave(){ $('expt').value=btoa(unescape(encodeURIComponent(JSON.stringify(profile)))); $('expm').textContent=''; $('expp').style.display='flex'; }
 $('expc').onclick=async()=>{ const t=$('expt'); t.select(); try{ await navigator.clipboard.writeText(t.value); $('expm').textContent='已複製'; }catch(e){ $('expm').textContent='請長按文字框手動複製'; } };
+$('rn').oninput=()=>{ $('imp').style.display=(localMode&&$('rn').value.trim().toLowerCase()==='hermes')?'block':'none'; };
 boot2();
 </script></body></html>
