@@ -47,6 +47,7 @@ button.b.s{background:#2d2640;color:var(--tx)}
 .x{position:absolute;top:10px;right:10px;width:36px;height:36px;border:0;border-radius:50%;background:#2d2640;color:#fff;font-size:18px;z-index:2;margin:0;padding:0}
 #rail{max-height:calc(100vh - 220px);flex-wrap:wrap-reverse;align-content:flex-start}
 @media (orientation:landscape){#joy{width:110px;height:110px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}#knob{left:25px;top:25px}#dig{bottom:calc(16px + env(safe-area-inset-bottom,0px));width:84px;height:84px}#rail{max-height:calc(100vh - 190px);right:calc(12px + env(safe-area-inset-right,0px))}#joy{left:calc(24px + env(safe-area-inset-left,0px))}.screen{align-items:flex-start;overflow-y:auto}.card{margin:auto}}
+textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid #3a3350;background:#120f1a;color:var(--tx);font-size:13px;touch-action:auto}
 </style></head><body>
 <canvas id="cv"></canvas>
 <div id="hud"><div>👤 <span id="pn">-</span>　💰 <span id="coin">0</span><br>⛏ <span id="pk">木製十字鎬</span>　🎒 <span id="cap">0/50</span></div><div>⬇ <span id="dp">0</span>m　<button id="out" class="b s ui" style="width:auto;margin:0;padding:4px 10px;font-size:13px">登出</button></div></div>
@@ -62,13 +63,14 @@ button.b.s{background:#2d2640;color:var(--tx)}
 <div class="screen" id="zonp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">礦區</h1><div id="zonl"></div><div id="zonm" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="pwp" style="display:none;z-index:8"><div class="card"><h1 style="font-size:22px">管理員驗證</h1><div class="note">請輸入密碼</div><input id="pwi" type="password" inputmode="numeric" placeholder="密碼"><div id="pwm" class="msg"></div><button class="b" id="pwok">確認</button><button class="b s" id="pwno">取消</button></div></div>
 <div class="screen" id="rmp" style="display:none;z-index:8"><div class="card" style="text-align:center"><h1 style="font-size:22px">帳號建立成功</h1><div class="note" style="text-align:center">請牢記你的玩家名稱</div><div id="rmn" style="font-size:26px;font-weight:700;color:var(--ac);margin:12px 0;word-break:break-all"></div><div class="note" id="rmt" style="text-align:center"></div><div class="note" style="text-align:center">進度會自動永久保存</div><button class="b" id="rmok">我記住了，開始遊戲</button></div></div>
-<div class="screen" id="admp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">管理員面板</h1><div class="note">玩家清單與金幣發放（僅管理員可見）</div><div id="admlist"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
+<div class="screen" id="expp" style="display:none;z-index:8"><div class="card"><h1 style="font-size:22px">匯出存檔碼</h1><div class="note">貼到 GitHub 版註冊頁的匯入欄</div><textarea id="expt" readonly rows="4"></textarea><div id="expm" class="msg ok"></div><button class="b" id="expc">複製</button><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
+<div class="screen" id="admp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">管理員面板</h1><div class="note">玩家清單與金幣發放（僅管理員可見）</div><div id="admlist"></div><button class="b s" onclick="renderAdm()">重新整理</button><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="title"><div class="card">
 <h1>深層礦域</h1><div class="sub">礦坑探索 試玩版</div>
 <div id="st" class="note" style="margin:0 0 8px">連線中…</div>
 <div id="menu" style="display:none"><button class="b" id="bLogin">登入帳號</button><button class="b s" id="bReg">註冊新帳號</button></div>
 <div id="lg" style="display:none"><div class="note" style="color:var(--tx)">登入現有帳號</div><input id="ln" placeholder="玩家名稱" maxlength="12"><input id="lp" type="password" placeholder="密碼"><button class="b" id="bLoginGo">登入</button><button class="b s" id="bBack1">返回</button></div>
-<div id="reg" style="display:none"><div class="note" style="color:var(--tx)">註冊新帳號</div><input id="rn" placeholder="玩家名稱（2–12 字）" maxlength="12"><input id="rp" type="password" placeholder="密碼（至少 4 碼）"><input id="rp2" type="password" placeholder="確認密碼"><button class="b" id="bRegGo">註冊並進入遊戲</button><button class="b s" id="bBack">返回</button></div>
+<div id="reg" style="display:none"><div class="note" style="color:var(--tx)">註冊新帳號</div><input id="rn" placeholder="玩家名稱（2–12 字）" maxlength="12"><input id="rp" type="password" placeholder="密碼（至少 4 碼）"><input id="rp2" type="password" placeholder="確認密碼"><textarea id="imp" rows="2" placeholder="匯入存檔碼（選填）"></textarea><button class="b" id="bRegGo">註冊並進入遊戲</button><button class="b s" id="bBack">返回</button></div>
 <div id="msg" class="msg"></div>
 <button class="b s" id="bOff" style="display:none">離線試玩（不存檔）</button>
 <div class="note" id="n1"></div><div class="note">請牢記你的玩家名稱</div>
@@ -79,14 +81,9 @@ button.b.s{background:#2d2640;color:var(--tx)}
 const $=id=>document.getElementById(id);
 let db=null,uid=null,profile=null,offline=false,running=false,saveT=0,isAdmin=false;
 const OD=[{id:'stone',n:'普通石塊',hp:20,min:5,c:0x8a8a8a,sc:0,p:5},{id:'coal',n:'煤礦',hp:40,min:5,c:0x2a2a30,sc:0x666677,p:12},{id:'copper',n:'銅礦',hp:80,min:10,c:0x8a5a3a,sc:0xff9a4a,p:30},{id:'iron',n:'鐵礦',hp:120,min:10,c:0x8f8580,sc:0xe8e0d8,p:55},{id:'gold',n:'黃金礦',hp:200,min:22,c:0x8a7a2a,sc:0xffd34a,p:180},{id:'bcrystal',n:'藍水晶',hp:300,min:22,c:0x2a5a8a,sc:0x59b8ff,p:350},{id:'amethyst',n:'紫水晶',hp:600,min:45,c:0x5a2a8a,sc:0xb36bff,p:900},{id:'ruby',n:'紅寶石礦',hp:800,min:45,c:0x8a2a3a,sc:0xff4a6a,p:1800},{id:'lava',n:'熔岩礦',hp:1500,min:90,c:0x5a1a0a,sc:0xff7a1a,p:5000},{id:'meteor',n:'星隕礦',hp:2500,min:180,c:0x2a2a4a,sc:0x8a7aff,p:12000},{id:'fossil',n:'遠古化石礦',hp:5000,min:350,c:0x6a5a3a,sc:0xd8c9a0,p:30000},{id:'void',n:'虛空核心',hp:8000,min:700,c:0x2a0a3a,sc:0xc040ff,p:80000}];
-async function applyGrant(){ try{ const g=await db.doc('grants/'+uid).get(); if(g.exists){const d=g.data(); if(d.nonce&&d.nonce!==profile.lastGrant&&Number.isFinite(d.amount)){profile.coins=(profile.coins||0)+d.amount;profile.lastGrant=d.nonce;await pdoc().set(profile);}} }catch(e){} }
+async function applyGrant(){ try{ const g=await db.doc('grants/'+uid).get(); if(g.exists){const d=g.data(); if(d.nonce&&d.nonce!==profile.lastGrant&&Number.isFinite(d.amount)){profile.coins=Math.max(0,(profile.coins||0)+d.amount);profile.lastGrant=d.nonce;await pdoc().set(profile);}} }catch(e){} }
 $('bag').onclick=()=>{ const l=$('bagl'); l.innerHTML=''; OD.forEach(o=>{const n=(profile.inv||{})[o.id]||0; const r=document.createElement('div'); r.className='row'; r.textContent=o.n+'　×'+n+'　（單件 '+o.p+' 金）'; l.append(r);}); $('bagp').style.display='flex'; };
-$('adm').onclick=async()=>{ $('admp').style.display='flex'; const l=$('admlist'); l.textContent='載入中…';
-  try{ const sn=await db.collection('players').get(); l.innerHTML=''; if(sn.empty) l.textContent='目前沒有玩家';
-    sn.docs.forEach(d=>{const p=d.data(),r=document.createElement('div'); r.className='row'; const t=document.createElement('span'); t.textContent=p.name+'　💰'+(p.coins||0)+'　深'+(p.maxDepth||0)+'m';
-      const i=document.createElement('input'); i.type='number'; i.placeholder='金幣'; i.style.width='80px'; const b=document.createElement('button'); b.className='b'; b.style.width='auto'; b.style.padding='6px 10px'; b.textContent='發放';
-      b.onclick=async()=>{const a=parseInt(i.value); if(!a) return; try{await db.doc('grants/'+d.id).set({amount:a,nonce:Date.now()}); b.textContent='已送出';}catch(e){b.textContent='失敗';}};
-      r.append(t,i,b); l.append(r);}); }catch(e){ l.textContent='讀取失敗：'+(e.code||'') } };
+$('adm').onclick=()=>{ $('admp').style.display='flex'; renderAdm(); };
 const msg=(t,ok)=>{$('msg').textContent=t||'';$('msg').className='msg'+(ok?' ok':'')};
 const nameKey=n=>[...n.toLowerCase()].map(c=>c.codePointAt(0).toString(16)).join('-');
 const pdoc=()=>db.doc('data/users/'+uid+'/profile');
@@ -136,7 +133,8 @@ function startGame(){
   $('title').style.display='none';
   ['hud','joy','tip'].forEach(i=>$(i).style.display=(i==='hud'?'flex':'block'));
   $('pn').textContent=profile.name+(offline?'（離線）':'');
-  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('cx').style.display=$('tr').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; refresh(); $('adm').style.display=(isAdmin&&profile.name==='Hermes'&&!offline)?'block':'none';
+  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('cx').style.display=$('tr').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; refresh();
+  if(db&&uid&&!localMode&&!offline){ try{ db.doc('grants/'+uid).onSnapshot(sn=>{ if(!sn.exists) return; const d=sn.data(); if(d.nonce&&d.nonce!==profile.lastGrant&&Number.isFinite(d.amount)){ profile.lastGrant=d.nonce; profile.coins=Math.max(0,(profile.coins||0)+d.amount); refresh(); save(); gt((d.amount>0?'管理員發放 +':'管理員扣除 ')+Math.abs(d.amount)+' 金'); } }); }catch(e){} } $('adm').style.display=(isAdmin&&profile.name==='Hermes'&&!offline)?'block':'none';
   if(running) return; running=true;
   if(!window.THREE){ alert('3D 引擎載入失敗'); return; }
   const cv=$('cv'),R=new THREE.WebGLRenderer({canvas:cv,antialias:false});
@@ -337,7 +335,7 @@ $('cx').onclick=()=>{ const f=profile.found||{}; $('cxc').textContent='已發現
     const t=two(k?c[1]:'？？？',k?c[2]+'・'+c[3].toLocaleString()+' 金':'未發現'); if(k) t.firstChild.parentNode.querySelector('small').style.color=RC[c[2]]; r.append(sw,t); l.append(r); }); $('cxp').style.display='flex'; };
 $('tr').onclick=()=>{ const p=profile,l=$('trl'); l.innerHTML=''; const row=(a,b)=>{ const r=document.createElement('div'); r.className='row'; const x=document.createElement('span'); x.textContent=a; const y=document.createElement('span'); y.textContent=b; r.append(x,y); l.append(r); };
   row('累積挖掘次數',(p.hits||0)); row('累積取得礦物',(p.mined||0)); row('累積出售金額',(p.sold||0).toLocaleString()+' 金'); row('已發現礦物',Object.keys(p.found||{}).length+' / 12'); row('最深深度',(p.maxDepth||0)+' m'); row('古代遺物',Object.keys(p.relics||{}).length+' / '+RL.length); row('已解鎖區域',(1+Object.keys(p.zones||{}).length)+' / 4');
-  const h=document.createElement('div'); h.className='note'; h.style.margin='10px 0 2px'; h.textContent='成就'; l.append(h); ACH.forEach(a=>row((p.ach&&p.ach[a[0]]?'✅ ':'⬜ ')+a[1],'')); $('trp').style.display='flex'; };
+  const h=document.createElement('div'); h.className='note'; h.style.margin='10px 0 2px'; h.textContent='成就'; l.append(h); ACH.forEach(a=>row((p.ach&&p.ach[a[0]]?'✅ ':'⬜ ')+a[1],'')); const eb=document.createElement('button'); eb.className='b s'; eb.textContent='匯出存檔碼'; eb.onclick=exportSave; l.append(eb); $('trp').style.display='flex'; };
 ['bagp','admp','shopp','cxp','trp','zonp'].forEach(i=>{ const sc=$(i); const x=document.createElement('button'); x.className='x'; x.textContent='✕'; x.onclick=()=>sc.style.display='none'; sc.firstElementChild.prepend(x); sc.addEventListener('click',e=>{ if(e.target===sc) sc.style.display='none'; }); });
 function askPw(){ return new Promise(res=>{ const p=$('pwp'); $('pwi').value=''; $('pwm').textContent=''; p.style.display='flex'; const done=v=>{ p.style.display='none'; res(v); };
   $('pwok').onclick=()=>{ if($('pwi').value==='2468') done(true); else $('pwm').textContent='密碼錯誤'; }; $('pwno').onclick=()=>done(false); }); }
@@ -378,16 +376,31 @@ $('bRegGo').onclick=async()=>{ const n=$('rn').value.trim();
   if(localMode){ const pw=$('rp').value; if(pw.length<4) return msg('密碼至少 4 碼'); if(pw!==$('rp2').value) return msg('兩次密碼不一致'); if(LS.get('dm:'+nameKey(n))) return msg('此玩家名稱已被使用'); }
   if(n.toLowerCase()==='hermes'&&!(await askPw())) return msg('管理員密碼錯誤');
   try{
-    if(localMode){ const salt=Math.random().toString(36).slice(2)+Date.now(),hash=await hashPw($('rp').value,salt),np=mkProfile(n); if(!LS.set('dm:'+nameKey(n),{salt,hash,profile:np})) return msg('無法寫入本機儲存空間'); profile=np; lkey=nameKey(n); lsalt=salt; lhash=hash; }
+    if(localMode){ const salt=Math.random().toString(36).slice(2)+Date.now(),hash=await hashPw($('rp').value,salt),np=impProfile(n); if(!LS.set('dm:'+nameKey(n),{salt,hash,profile:np})) return msg('無法寫入本機儲存空間'); profile=np; lkey=nameKey(n); lsalt=salt; lhash=hash; }
     else{ if(cloudProfile) return msg('你已有帳號，請直接登入'); const nd=db.doc('names/'+nameKey(n)); if((await nd.get()).exists) return msg('此玩家名稱已被使用'); await nd.set({owner:uid}); if((await nd.get()).data().owner!==uid) return msg('此玩家名稱已被使用');
       profile=mkProfile(n); await pdoc().set(profile); cloudProfile=profile; }
-  }catch(e){ return msg('建立失敗，請稍後再試'); }
+  }catch(e){ return msg(e&&e.message==='bad'?'存檔碼無效':'建立失敗，請稍後再試'); }
   await remind(); startGame(); };
 async function boot2(){
   try{ if(window.claude){ db=await claude.use('db'); const u=await claude.use('user'); if(u){ uid=await u.id(); isAdmin=await u.isOwner(); } } }catch(e){}
-  $('bOff').style.display='block'; localMode=!(db&&uid); ['lp','rp','rp2'].forEach(i=>$(i).style.display=localMode?'block':'none');
+  $('bOff').style.display='block'; localMode=!(db&&uid); ['lp','rp','rp2','imp'].forEach(i=>$(i).style.display=localMode?'block':'none');
   if(localMode){ $('st').textContent='本機帳號'; $('n1').textContent='帳號只存在這台裝置'; }
   else{ $('n1').textContent='存檔綁定 Claude 登入帳號'; try{ const sn=await pdoc().get(); if(sn.exists) cloudProfile=JSON.parse(JSON.stringify(sn.data())); $('st').textContent=cloudProfile?'找到存檔：'+cloudProfile.name:'雲端存檔已連線'; }catch(e){ $('st').textContent='讀取失敗，請重新整理'; return; } }
   showForm('menu'); }
+const ago=ms=>ms<3.6e6?Math.max(1,Math.round(ms/6e4))+' 分鐘前':ms<8.64e7?Math.round(ms/3.6e6)+' 小時前':Math.round(ms/8.64e7)+' 天前';
+async function renderAdm(){ const l=$('admlist'); l.textContent='載入中…';
+  try{ const sn=await db.collection('players').get(); l.innerHTML=''; const now=Date.now(),docs=sn.docs.map(d=>({id:d.id,p:d.data()})).sort((a,b)=>(b.p.t||0)-(a.p.t||0)),on=docs.filter(x=>now-(x.p.t||0)<45000).length;
+    const h=document.createElement('div'); h.className='note'; h.textContent='線上 '+on+' 人／共 '+docs.length+' 人'; l.append(h);
+    docs.forEach(({id,p})=>{ const online=now-(p.t||0)<45000,r=document.createElement('div'); r.className='row';
+      const t=two((online?'🟢 ':'⚪ ')+p.name,'💰'+(p.coins||0).toLocaleString()+'・深'+(p.maxDepth||0)+'m'+(online?'':'・'+ago(now-(p.t||0))));
+      const i=document.createElement('input'); i.type='number'; i.placeholder='數量'; i.style.width='70px';
+      const mk=(lab,sg)=>{ const b=document.createElement('button'); b.className='b'+(sg<0?' s':''); b.textContent=lab; b.onclick=async()=>{ const a=Math.abs(parseInt(i.value)); if(!a) return; try{ await db.doc('grants/'+id).set({amount:sg*a,nonce:Date.now()}); b.textContent='✓'; }catch(e){ b.textContent='✗'; } setTimeout(()=>b.textContent=lab,1500); }; return b; };
+      r.append(t,i,mk('＋',1),mk('－',-1)); l.append(r); }); }
+  catch(e){ l.textContent='讀取失敗：'+(e.code||''); } }
+setInterval(()=>{ if($('admp').style.display==='flex'&&db) renderAdm(); },15000);
+function impProfile(n){ const v=$('imp').value.trim(); if(!v) return mkProfile(n); let o; try{ o=JSON.parse(decodeURIComponent(escape(atob(v)))); }catch(e){ throw new Error('bad'); }
+  if(!o||typeof o!=='object'||!Number.isFinite(o.coins)) throw new Error('bad'); delete o.lastGrant; return Object.assign(mkProfile(n),o,{name:n}); }
+function exportSave(){ $('expt').value=btoa(unescape(encodeURIComponent(JSON.stringify(profile)))); $('expm').textContent=''; $('expp').style.display='flex'; }
+$('expc').onclick=async()=>{ const t=$('expt'); t.select(); try{ await navigator.clipboard.writeText(t.value); $('expm').textContent='已複製'; }catch(e){ $('expm').textContent='請長按文字框手動複製'; } };
 boot2();
 </script></body></html>
