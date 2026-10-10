@@ -48,14 +48,18 @@ button.b.s{background:#2d2640;color:var(--tx)}
 #rail{max-height:calc(100vh - 220px);flex-wrap:wrap-reverse;align-content:flex-start}
 @media (orientation:landscape){#joy{width:110px;height:110px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}#knob{left:25px;top:25px}#dig{bottom:calc(16px + env(safe-area-inset-bottom,0px));width:84px;height:84px}#rail{max-height:calc(100vh - 190px);right:calc(12px + env(safe-area-inset-right,0px))}#joy{left:calc(24px + env(safe-area-inset-left,0px))}.screen{align-items:flex-start;overflow-y:auto}.card{margin:auto}}
 textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid #3a3350;background:#120f1a;color:var(--tx);font-size:13px;touch-action:auto}
+button,.ui,#dig{touch-action:manipulation !important}
+textarea,input{font-size:16px !important}
+#scn{position:fixed;top:calc(96px + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;font-size:12px;color:#7be0a0;z-index:3;pointer-events:none}
+#mpc{display:block;margin:6px 0}
 </style></head><body>
 <canvas id="cv"></canvas>
-<div id="hud"><div>👤 <span id="pn">-</span>　💰 <span id="coin">0</span><br>⛏ <span id="pk">木製十字鎬</span>　🎒 <span id="cap">0/50</span></div><div>⬇ <span id="dp">0</span>m　<button id="out" class="b s ui" style="width:auto;margin:0;padding:4px 10px;font-size:13px">登出</button></div></div>
+<div id="hud"><div>👤 <span id="pn">-</span>　💰 <span id="coin">0</span><br>⛏ <span id="pk">木製十字鎬</span>　🎒 <span id="cap">0/50</span></div><div>⬇ <span id="dp">0</span>m　<button id="out" class="b s ui" style="width:auto;margin:0;padding:4px 10px;font-size:13px">登出</button><br><span id="bm"></span></div></div>
 <div id="joy"><div id="knob"></div></div>
 <div id="tip">搖桿移動・拖曳轉視角</div>
 
-<div id="tg"></div><div id="toast"></div>
-<button class="ui" id="dig">⛏ 挖掘</button><div id="rail"><button class="ui" id="bag">🎒</button><button class="ui" id="shop">🛒</button><button class="ui" id="zn">🧭</button><button class="ui" id="cx">📖</button><button class="ui" id="tr">🏆</button><button class="ui" id="adm">🛠</button></div>
+<div id="tg"></div><div id="scn"></div><div id="toast"></div>
+<button class="ui" id="dig">⛏ 挖掘</button><div id="rail"><button class="ui" id="bag">🎒</button><button class="ui" id="shop">🛒</button><button class="ui" id="zn">🧭</button><button class="ui" id="cx">📖</button><button class="ui" id="mp">🗺</button><button class="ui" id="tr">🏆</button><button class="ui" id="adm">🛠</button></div>
 <div class="screen" id="bagp" style="display:none"><div class="card"><h1 style="font-size:22px">背包</h1><div class="note" id="bagc"></div><div id="bagl"></div><div id="bagmsg" class="msg ok"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="shopp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">十字鎬商店</h1><div class="note" id="shopc"></div><div id="shopl"></div><div id="shopmsg" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="cxp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">礦物圖鑑</h1><div class="note" id="cxc"></div><div id="cxl"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
@@ -64,6 +68,7 @@ textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px soli
 <div class="screen" id="pwp" style="display:none;z-index:8"><div class="card"><h1 style="font-size:22px">管理員驗證</h1><div class="note">請輸入密碼</div><input id="pwi" type="password" inputmode="numeric" placeholder="密碼"><div id="pwm" class="msg"></div><button class="b" id="pwok">確認</button><button class="b s" id="pwno">取消</button></div></div>
 <div class="screen" id="rmp" style="display:none;z-index:8"><div class="card" style="text-align:center"><h1 style="font-size:22px">帳號建立成功</h1><div class="note" style="text-align:center">請牢記你的玩家名稱</div><div id="rmn" style="font-size:26px;font-weight:700;color:var(--ac);margin:12px 0;word-break:break-all"></div><div class="note" id="rmt" style="text-align:center"></div><div class="note" style="text-align:center">進度會自動永久保存</div><button class="b" id="rmok">我記住了，開始遊戲</button></div></div>
 <div class="screen" id="expp" style="display:none;z-index:8"><div class="card"><h1 style="font-size:22px">匯出存檔碼</h1><div class="note">貼到 GitHub 版註冊頁的匯入欄</div><textarea id="expt" readonly rows="4"></textarea><div id="expm" class="msg ok"></div><button class="b" id="expc">複製</button><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
+<div class="screen" id="mpp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">探勘地圖</h1><canvas id="mpc" width="288" height="288" style="width:100%"></canvas><div class="note" id="mpl" style="white-space:normal">⬜出生點　🟨寶箱　🟪秘密房間　🟦遺跡機關</div><div id="mpi"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="admp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">管理員面板</h1><div class="note">玩家清單與金幣發放（僅管理員可見）</div><div id="admlist"></div><button class="b s" onclick="renderAdm()">重新整理</button><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="title"><div class="card">
 <h1>深層礦域</h1><div class="sub">礦坑探索 試玩版</div>
@@ -82,7 +87,7 @@ const $=id=>document.getElementById(id);
 const SB_URL='',SB_KEY='';
 let sbMode=false,sbS=null,sbSaving=false,sbDirty=false;
 let db=null,uid=null,profile=null,offline=false,running=false,saveT=0,isAdmin=false;
-const OD=[{id:'stone',n:'普通石塊',hp:20,min:5,c:0x8a8a8a,sc:0,p:5},{id:'coal',n:'煤礦',hp:40,min:5,c:0x2a2a30,sc:0x666677,p:12},{id:'copper',n:'銅礦',hp:80,min:10,c:0x8a5a3a,sc:0xff9a4a,p:30},{id:'iron',n:'鐵礦',hp:120,min:10,c:0x8f8580,sc:0xe8e0d8,p:55},{id:'gold',n:'黃金礦',hp:200,min:22,c:0x8a7a2a,sc:0xffd34a,p:180},{id:'bcrystal',n:'藍水晶',hp:300,min:22,c:0x2a5a8a,sc:0x59b8ff,p:350},{id:'amethyst',n:'紫水晶',hp:600,min:45,c:0x5a2a8a,sc:0xb36bff,p:900},{id:'ruby',n:'紅寶石礦',hp:800,min:45,c:0x8a2a3a,sc:0xff4a6a,p:1800},{id:'lava',n:'熔岩礦',hp:1500,min:90,c:0x5a1a0a,sc:0xff7a1a,p:5000},{id:'meteor',n:'星隕礦',hp:2500,min:180,c:0x2a2a4a,sc:0x8a7aff,p:12000},{id:'fossil',n:'遠古化石礦',hp:5000,min:350,c:0x6a5a3a,sc:0xd8c9a0,p:30000},{id:'void',n:'虛空核心',hp:8000,min:700,c:0x2a0a3a,sc:0xc040ff,p:80000}];
+const OD=[{id:'stone',n:'普通石塊',hp:20,min:5,c:0x8a8a8a,sc:0,p:5},{id:'coal',n:'煤礦',hp:40,min:5,c:0x2a2a30,sc:0x666677,p:12},{id:'copper',n:'銅礦',hp:80,min:10,c:0x8a5a3a,sc:0xff9a4a,p:30},{id:'iron',n:'鐵礦',hp:120,min:10,c:0x8f8580,sc:0xe8e0d8,p:55},{id:'gold',n:'黃金礦',hp:200,min:22,c:0x8a7a2a,sc:0xffd34a,p:180},{id:'bcrystal',n:'藍水晶',hp:300,min:22,c:0x2a5a8a,sc:0x59b8ff,p:350},{id:'amethyst',n:'紫水晶',hp:600,min:45,c:0x5a2a8a,sc:0xb36bff,p:900},{id:'ruby',n:'紅寶石礦',hp:800,min:45,c:0x8a2a3a,sc:0xff4a6a,p:1800},{id:'lava',n:'熔岩礦',hp:1500,min:90,c:0x5a1a0a,sc:0xff7a1a,p:5000},{id:'meteor',n:'星隕礦',hp:2500,min:180,c:0x2a2a4a,sc:0x8a7aff,p:12000},{id:'fossil',n:'遠古化石礦',hp:5000,min:350,c:0x6a5a3a,sc:0xd8c9a0,p:30000},{id:'void',n:'虛空核心',hp:8000,min:700,c:0x2a0a3a,sc:0xc040ff,p:80000},{id:'abyss',n:'深淵晶',hp:15000,min:1000,c:0x201040,sc:0x7a5cff,p:150000},{id:'prism',n:'稜光晶',hp:30000,min:1500,c:0x103040,sc:0x40ffe0,p:400000}];
 async function applyGrant(){ try{ const g=await db.doc('grants/'+uid).get(); if(g.exists){const d=g.data(); if(d.nonce&&d.nonce!==profile.lastGrant&&Number.isFinite(d.amount)){profile.coins=Math.max(0,(profile.coins||0)+d.amount);profile.lastGrant=d.nonce;await pdoc().set(profile);}} }catch(e){} }
 $('bag').onclick=()=>{ const l=$('bagl'); l.innerHTML=''; OD.forEach(o=>{const n=(profile.inv||{})[o.id]||0; const r=document.createElement('div'); r.className='row'; r.textContent=o.n+'　×'+n+'　（單件 '+o.p+' 金）'; l.append(r);}); $('bagp').style.display='flex'; };
 $('adm').onclick=()=>{ $('admp').style.display='flex'; renderAdm(); };
@@ -136,7 +141,7 @@ function startGame(){
   $('title').style.display='none';
   ['hud','joy','tip'].forEach(i=>$(i).style.display=(i==='hud'?'flex':'block'));
   $('pn').textContent=profile.name+(offline?'（離線）':'');
-  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('cx').style.display=$('tr').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; refresh();
+  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('mp').style.display=$('cx').style.display=$('tr').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; profile.dug=profile.dug||{}; profile.exp=profile.exp||{}; profile.poi=profile.poi||[]; profile.rooms=profile.rooms||{}; profile.puzzles=profile.puzzles||{}; profile.biomes=profile.biomes||{}; if(!profile.seed) profile.seed=(Math.random()*4294967296)>>>0; if(!profile.v2){ if(Math.abs(profile.x||0)>75||Math.abs(profile.z||0)>75){ profile.x=0; profile.z=0; } profile.v2=1; } refresh();
   if(db&&uid&&!localMode&&!offline){ try{ db.doc('grants/'+uid).onSnapshot(sn=>{ if(!sn.exists) return; const d=sn.data(); if(d.nonce&&d.nonce!==profile.lastGrant&&Number.isFinite(d.amount)){ profile.lastGrant=d.nonce; profile.coins=Math.max(0,(profile.coins||0)+d.amount); refresh(); save(); gt((d.amount>0?'管理員發放 +':'管理員扣除 ')+Math.abs(d.amount)+' 金'); } }); }catch(e){} } $('adm').style.display=(profile.name==='Hermes'&&!offline&&(isAdmin||localMode))?'block':'none';
   if(running) return; running=true;
   if(!window.THREE){ alert('3D 引擎載入失敗'); return; }
@@ -148,26 +153,7 @@ function startGame(){
   const torch=new THREE.PointLight(0xffc070,1.4,22,1.6); torch.castShadow=false; torch.shadow.mapSize.set(512,512); S.add(torch);
   const rs=(()=>{let s=7;return()=>(s=(s*16807)%2147483647)/2147483647})();
   const M=(c,r=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:r,flatShading:true});
-  const SZ=56; const obst=[];
-  const ground=new THREE.Mesh(new THREE.PlaneGeometry(SZ*2+4,SZ*2+4,1,1),M(0x3b3340)); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; S.add(ground);
-  const ceil=new THREE.Mesh(new THREE.PlaneGeometry(SZ*2+4,SZ*2+4),M(0x1a1620)); ceil.rotation.x=Math.PI/2; ceil.position.y=7; S.add(ceil);
-  // boundary walls
-  const wm=M(0x4a4152,1);
-  for(let i=0;i<4;i++){ const w=new THREE.Mesh(new THREE.BoxGeometry(SZ*2+4,7,2),wm); w.position.y=3.5;
-    const a=i*Math.PI/2; w.position.x=Math.sin(a)*(SZ+1); w.position.z=Math.cos(a)*(SZ+1); w.rotation.y=a; w.receiveShadow=true; S.add(w); }
-  // rock pillars / boulders (collision circles), keep spawn clear
-  const rg=new THREE.DodecahedronGeometry(1,0);
-  for(let i=0;i<160;i++){
-    const x=(rs()*2-1)*(SZ-3),z=(rs()*2-1)*(SZ-3); if(Math.hypot(x,z)<5) continue;
-    const r=.8+rs()*1.8,h=r*(1+rs()*2.2);
-    const m=new THREE.Mesh(rg,M(rs()<.5?0x5a5163:0x4d4457)); m.scale.set(r,h,r); m.position.set(x,h*.8,z); m.rotation.y=rs()*6; m.castShadow=m.receiveShadow=true; S.add(m);
-    obst.push({x,z,r:r*.95});
-  }
-  // stalactites for cave feel
-  for(let i=0;i<90;i++){ const m=new THREE.Mesh(new THREE.ConeGeometry(.4+rs()*.5,2+rs()*2,5),wm); m.rotation.x=Math.PI; m.position.set((rs()*2-1)*SZ,6.2,(rs()*2-1)*SZ); S.add(m); }
-  // glowing crystals as decoration only (not minable)
-  for(let i=0;i<12;i++){ const m=new THREE.Mesh(new THREE.OctahedronGeometry(.35),new THREE.MeshBasicMaterial({color:i%2?0x59b8ff:0xb36bff}));
-    m.position.set((rs()*2-1)*(SZ-3),.4,(rs()*2-1)*(SZ-3)); S.add(m); if(i<3){ const l=new THREE.PointLight(i%2?0x59b8ff:0xb36bff,.5,6); l.position.copy(m.position); S.add(l); } }
+  const obst=[],ores=[],acts=[],rooms=[],rg=new THREE.DodecahedronGeometry(1,0);
   // player
   const P=new THREE.Group(),sk=M(0xf2c9a0),sh=M(0x3b6fd6),pt=M(0x3a3a4a);
   const mk=(g,m,x,y,z)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;P.add(o);return o};
@@ -180,55 +166,67 @@ function startGame(){
   const hd=new THREE.Mesh(new THREE.BoxGeometry(.7,.12,.12),pkm); hd.position.y=-.2; const hn=new THREE.Mesh(new THREE.BoxGeometry(.07,.7,.07),M(0x6b4a2a)); hn.position.y=-.1; pk3.add(hn,hd); pk3.position.set(0,-.4,.15); pk3.rotation.x=-1.2; armR.add(pk3);
   window.setPkColor=c=>pkm.color.set(c);
   S.add(P); P.position.set(profile.x||0,0,profile.z||0);
-  // ores (zone 1)
-  const ores=[],PW={wood:5},pw=PW[profile.pickaxe||'wood']||5;
-  for(let i=0;i<90;i++){ const r=rs(),d=OD[r<.4?0:r<.7?1:r<.87?2:3]; let x,z,ok=false;
-    for(let k=0;k<20&&!ok;k++){ x=(rs()*2-1)*(SZ-3); z=(rs()*2-1)*(SZ-3); ok=Math.hypot(x,z)>3.5&&obst.every(o=>Math.hypot(x-o.x,z-o.z)>o.r+1.4); }
-    if(!ok) continue;
-    const g=new THREE.Group(),b=new THREE.Mesh(rg,M(d.c,.7)); b.scale.set(.8,.7,.8); b.position.y=.6; b.castShadow=true; g.add(b);
-    if(d.sc) for(let j=0;j<3;j++){ const sh=new THREE.Mesh(new THREE.OctahedronGeometry(.2),new THREE.MeshStandardMaterial({color:d.sc,emissive:d.sc,emissiveIntensity:.5,flatShading:true})); sh.position.set(Math.cos(j*2.1)*.55,.7+j*.12,Math.sin(j*2.1)*.55); g.add(sh); }
-    g.position.set(x,0,z); S.add(g); const c={x,z,r:.85}; obst.push(c); ores.push({d,hp:d.hp,g,c,x,z,t:0}); }
-  const chests=[]; let ch=null;
-  for(let i=0;i<5;i++){ let x,z,ok=false; for(let k=0;k<30&&!ok;k++){ x=(rs()*2-1)*(SZ-4); z=(rs()*2-1)*(SZ-4); ok=Math.hypot(x,z)>6&&obst.every(o=>Math.hypot(x-o.x,z-o.z)>o.r+1.2); } if(!ok) continue;
-    const g=new THREE.Group(),bx=new THREE.Mesh(new THREE.BoxGeometry(1,.6,.7),M(0x8b5a2b)),lg=new THREE.Group(),ld=new THREE.Mesh(new THREE.BoxGeometry(1,.25,.7),M(0xa06a35)),lk=new THREE.Mesh(new THREE.BoxGeometry(.18,.2,.08),new THREE.MeshBasicMaterial({color:0xffd34a}));
-    bx.position.y=.3; lg.position.set(0,.6,-.35); ld.position.set(0,.12,.35); lk.position.set(0,.05,.72); lg.add(ld,lk); g.add(bx,lg); bx.castShadow=true; g.position.set(x,0,z); g.rotation.y=rs()*6; S.add(g);
-    const id='c'+i; if(profile.chests[id]) lg.rotation.x=-1.2; chests.push({id,i,x,z,lg}); }
-  const openChest=c=>{ profile.chests[c.id]=1; c.lg.rotation.x=-1.2; const r=120+c.i*60,rel=RL[c.i%RL.length],nw=!profile.relics[rel]; profile.coins=(profile.coins||0)+r; profile.relics[rel]=1; refresh(); burst(c.x,1,c.z,0xffd34a,16); toast('寶箱 +'+r+' 金'+(nw?'・NEW '+rel:'')); save(); setTimeout(checkAch,1700); };
-  const ZX=150; const ZC={0:0x0b0910,150:0x0a0a1c,300:0x2a0a05,450:0x08161a},setFog=x=>{ S.fog.color.set(ZC[zcOf(x)]); S.background.set(ZC[zcOf(x)]); }; window.tp=(x,z)=>{ P.position.set(x,0,z); setFog(x); }; setFog(P.position.x);
-  { const r2=M(0x2c2c4e),wm2=M(0x3a3a66,1);
-    const gr=new THREE.Mesh(new THREE.PlaneGeometry(SZ*2+4,SZ*2+4),r2); gr.rotation.x=-Math.PI/2; gr.position.x=ZX; gr.receiveShadow=true; S.add(gr);
-    const cl=new THREE.Mesh(new THREE.PlaneGeometry(SZ*2+4,SZ*2+4),M(0x151530)); cl.rotation.x=Math.PI/2; cl.position.set(ZX,7,0); S.add(cl);
-    for(let i=0;i<4;i++){ const w=new THREE.Mesh(new THREE.BoxGeometry(SZ*2+4,7,2),wm2),a=i*Math.PI/2; w.position.set(ZX+Math.sin(a)*(SZ+1),3.5,Math.cos(a)*(SZ+1)); w.rotation.y=a; S.add(w); }
-    for(let i=0;i<120;i++){ const x=ZX+(rs()*2-1)*(SZ-3),z=(rs()*2-1)*(SZ-3); if(Math.hypot(x-ZX,z)<5) continue; const r=.8+rs()*1.6,h=r*(1+rs()*2);
-      const m=new THREE.Mesh(rg,M(rs()<.5?0x4a4a7a:0x3d3d68)); m.scale.set(r,h,r); m.position.set(x,h*.8,z); m.rotation.y=rs()*6; m.castShadow=true; S.add(m); obst.push({x,z,r:r*.95}); }
-    const cc=[0x59b8ff,0xb36bff,0xff6bd6,0x6fe0ff];
-    for(let i=0;i<70;i++){ const h=.8+rs()*1.8,m=new THREE.Mesh(new THREE.ConeGeometry(.25+rs()*.3,h,5),new THREE.MeshBasicMaterial({color:cc[i%4]})); m.position.set(ZX+(rs()*2-1)*(SZ-2),h/2,(rs()*2-1)*(SZ-2)); m.rotation.z=(rs()-.5)*.5; S.add(m); }
-    const l1=new THREE.PointLight(0x59b8ff,.9,18); l1.position.set(ZX-10,3,-8); const l2=new THREE.PointLight(0xb36bff,.9,18); l2.position.set(ZX+10,3,10); S.add(l1,l2);
-    for(let i=0;i<80;i++){ const r=rs(),d=OD[r<.35?4:r<.7?5:r<.88?6:7]; let x,z,ok=false;
-      for(let k=0;k<20&&!ok;k++){ x=ZX+(rs()*2-1)*(SZ-3); z=(rs()*2-1)*(SZ-3); ok=Math.hypot(x-ZX,z)>4&&obst.every(o=>Math.hypot(x-o.x,z-o.z)>o.r+1.4); } if(!ok) continue;
-      const g=new THREE.Group(),b=new THREE.Mesh(rg,M(d.c,.6)); b.scale.set(.8,.75,.8); b.position.y=.6; b.castShadow=true; g.add(b);
-      for(let j=0;j<4;j++){ const sh=new THREE.Mesh(new THREE.OctahedronGeometry(.22),new THREE.MeshStandardMaterial({color:d.sc,emissive:d.sc,emissiveIntensity:.8,flatShading:true})); sh.position.set(Math.cos(j*1.7)*.55,.7+j*.1,Math.sin(j*1.7)*.55); g.add(sh); }
-      g.position.set(x,0,z); S.add(g); const c={x,z,r:.85}; obst.push(c); ores.push({d,hp:d.hp,g,c,x,z,t:0}); }
-    for(let i=0;i<3;i++){ let x,z,ok=false; for(let k=0;k<30&&!ok;k++){ x=ZX+(rs()*2-1)*(SZ-4); z=(rs()*2-1)*(SZ-4); ok=Math.hypot(x-ZX,z)>6&&obst.every(o=>Math.hypot(x-o.x,z-o.z)>o.r+1.2); } if(!ok) continue;
-      const g=new THREE.Group(),bx=new THREE.Mesh(new THREE.BoxGeometry(1,.6,.7),M(0x5a4a8b)),lg=new THREE.Group(),ld=new THREE.Mesh(new THREE.BoxGeometry(1,.25,.7),M(0x7a6ab0)),lk=new THREE.Mesh(new THREE.BoxGeometry(.18,.2,.08),new THREE.MeshBasicMaterial({color:0x6fe0ff}));
-      bx.position.y=.3; lg.position.set(0,.6,-.35); ld.position.set(0,.12,.35); lk.position.set(0,.05,.72); lg.add(ld,lk); g.add(bx,lg); g.position.set(x,0,z); g.rotation.y=rs()*6; S.add(g);
-      const id='c'+(5+i); if(profile.chests[id]) lg.rotation.x=-1.2; chests.push({id,i:5+i,x,z,lg}); } }
-  const place=(X,minR,ex)=>{ for(let k=0;k<30;k++){ const x=X+(rs()*2-1)*(SZ-4),z=(rs()*2-1)*(SZ-4); if(Math.hypot(x-X,z)>minR&&obst.every(o=>Math.hypot(x-o.x,z-o.z)>o.r+ex)) return [x,z]; } return null; };
-  const mkChest=(id,i,x,z,c1,c2,lc)=>{ const g=new THREE.Group(),bx=new THREE.Mesh(new THREE.BoxGeometry(1,.6,.7),M(c1)),lg=new THREE.Group(),ld=new THREE.Mesh(new THREE.BoxGeometry(1,.25,.7),M(c2)),lk=new THREE.Mesh(new THREE.BoxGeometry(.18,.2,.08),new THREE.MeshBasicMaterial({color:lc})); bx.position.y=.3; lg.position.set(0,.6,-.35); ld.position.set(0,.12,.35); lk.position.set(0,.05,.72); lg.add(ld,lk); g.add(bx,lg); g.position.set(x,0,z); g.rotation.y=rs()*6; S.add(g); if(profile.chests[id]) lg.rotation.x=-1.2; chests.push({id,i,x,z,lg}); };
-  const genZone=(X,cf)=>{
-    const pl=(c,y,rot)=>{ const m=new THREE.Mesh(new THREE.PlaneGeometry(SZ*2+4,SZ*2+4),M(c)); m.rotation.x=rot; m.position.set(X,y,0); if(rot<0) m.receiveShadow=true; S.add(m); }; pl(cf.g,0,-Math.PI/2); pl(cf.c,7,Math.PI/2);
-    const wm=M(cf.w,1); for(let i=0;i<4;i++){ const w=new THREE.Mesh(new THREE.BoxGeometry(SZ*2+4,7,2),wm),a=i*Math.PI/2; w.position.set(X+Math.sin(a)*(SZ+1),3.5,Math.cos(a)*(SZ+1)); w.rotation.y=a; S.add(w); }
-    for(let i=0;i<130;i++){ const p=place(X,5,.5); if(!p) continue; const r=.8+rs()*1.6,h=r*(1+rs()*2),m=new THREE.Mesh(rg,M(cf.r[i%2])); m.scale.set(r,h,r); m.position.set(p[0],h*.8,p[1]); m.rotation.y=rs()*6; S.add(m); obst.push({x:p[0],z:p[1],r:r*.95}); }
-    for(let i=0;i<(cf.lava?24:36);i++){ const x=X+(rs()*2-1)*(SZ-3),z=(rs()*2-1)*(SZ-3); if(Math.hypot(x-X,z)<6) continue;
-      if(cf.lava){ const m=new THREE.Mesh(new THREE.CircleGeometry(1.5+rs()*2.2,10),new THREE.MeshBasicMaterial({color:i%2?0xff5a10:0xffa020})); m.rotation.x=-Math.PI/2; m.position.set(x,.03,z); S.add(m); }
-      else { const h=3+rs()*3,m=new THREE.Mesh(new THREE.BoxGeometry(.9,h,.9),M(0x8a7a5a)); m.position.set(x,h/2,z); m.rotation.y=rs(); S.add(m); obst.push({x,z,r:.75}); } }
-    for(let i=0;i<80;i++){ const r=rs(),d=OD[r<cf.o[2]?cf.o[0]:cf.o[1]],p=place(X,4,1.4); if(!p) continue;
-      const g=new THREE.Group(),b=new THREE.Mesh(rg,M(d.c,.6)); b.scale.set(.8,.75,.8); b.position.y=.6; g.add(b);
-      for(let j=0;j<4;j++){ const sh=new THREE.Mesh(new THREE.OctahedronGeometry(.22),new THREE.MeshStandardMaterial({color:d.sc,emissive:d.sc,emissiveIntensity:.9,flatShading:true})); sh.position.set(Math.cos(j*1.7)*.55,.7+j*.1,Math.sin(j*1.7)*.55); g.add(sh); }
-      g.position.set(p[0],0,p[1]); S.add(g); const c={x:p[0],z:p[1],r:.85}; obst.push(c); ores.push({d,hp:d.hp,g,c,x:p[0],z:p[1],t:0}); }
-    cf.ch.forEach(n=>{ const p=place(X,6,1.2); if(p) mkChest('c'+n,n,p[0],p[1],cf.k1,cf.k2,cf.lk); }); };
-  genZone(300,{g:0x3a1a14,c:0x1a0a08,w:0x5a2a1e,r:[0x4a2a22,0x3a1e1a],o:[8,9,.65],ch:[8,9],k1:0x6a2a1a,k2:0x8a3a22,lk:0xff7a1a,lava:1});
-  genZone(450,{g:0x4a4638,c:0x1a1812,w:0x5e5846,r:[0x6a634e,0x585240],o:[10,11,.65],ch:[10,11,12],k1:0x6a5a3a,k2:0x8a7a52,lk:0x40e0d0});
+  // ===== 無限分區世界（依深度分成 5 個區域，只載入附近 3x3 區塊）=====
+  const SEED=profile.seed,chunks=new Map(),CC=new Map(),key=(a,b)=>a+','+b;
+  let curCx=null,curCz=null,curBi=-1,scanT=0;
+  const MC=new Map(),mt=(c,r=.9,e=0)=>{ const k=c+'|'+r+'|'+e; let m=MC.get(k); if(!m){ m=new THREE.MeshStandardMaterial(e?{color:c,emissive:c,emissiveIntensity:e,roughness:r,flatShading:true}:{color:c,roughness:r,flatShading:true}); MC.set(k,m); } return m; };
+  const G={oct:new THREE.OctahedronGeometry(1),cone:new THREE.ConeGeometry(1,1,5),box:new THREE.BoxGeometry(1,1,1),disc:new THREE.CircleGeometry(1,14),tile:new THREE.PlaneGeometry(CS,CS)};
+  const ceil=new THREE.Mesh(new THREE.PlaneGeometry(260,260),new THREE.MeshStandardMaterial({color:0x15121c})); ceil.rotation.x=Math.PI/2; ceil.position.y=7; S.add(ceil);
+  const getChunk=(a,b)=>{ const k=key(a,b); let c=CC.get(k); if(!c){ if(CC.size>400) CC.clear(); c=genChunk(a,b,SEED); CC.set(k,c); } return c; };
+  const addPoi=(x,z,t)=>{ profile.poi=profile.poi||[]; if(profile.poi.length<400) profile.poi.push([Math.round(x),Math.round(z),t]); };
+  const addExp=(cx,cz)=>{ const row=profile.exp[cz]=profile.exp[cz]||[]; for(const iv of row){ if(cx>=iv[0]&&cx<=iv[1]) return; if(cx===iv[0]-1){ iv[0]=cx; return; } if(cx===iv[1]+1){ iv[1]=cx; return; } } row.push([cx,cx]); };
+  const TIER=[[0x8b5a2b,0xa06a35,0xffd34a],[0x3a4a8b,0x5a6ab0,0x6fe0ff],[0x6a2a1a,0x8a3a22,0xff7a1a],[0x6a5a3a,0x8a7a52,0x40e0d0],[0x2a1a5a,0x4a3a8a,0x7a5cff]];
+  function buildChunk(ch){
+    const b=BIOMES[ch.bi],g=new THREE.Group(),rec={k:key(ch.cx,ch.cz),cx:ch.cx,cz:ch.cz,g,obs:[],ores:[],acts:[],rooms:ch.rooms,own:[]};
+    const put=(geo,mat,x,y,z,sx,sy,sz)=>{ const m=new THREE.Mesh(geo,mat); m.position.set(x,y,z); m.scale.set(sx,sy,sz); g.add(m); return m; };
+    const gm=new THREE.Mesh(G.tile,mt(b.g)); gm.rotation.x=-Math.PI/2; gm.position.set(ch.cx*CS+CS/2,0,ch.cz*CS+CS/2); g.add(gm);
+    ch.rocks.forEach(o=>{ if(o.pillar) put(G.box,mt(0x8a7a5a),o.x,o.h/2,o.z,.9,o.h,.9); else { const s=o.r/.95; put(rg,mt(b.rk[o.col]),o.x,o.h*.8,o.z,s,o.h,s); } rec.obs.push({x:o.x,z:o.z,r:o.r}); });
+    ch.pools.forEach(p=>{ const m=put(G.disc,mt(p.col,.4,.6),p.x,.03,p.z,p.r,p.r,1); m.rotation.x=-Math.PI/2; if(p.solid) rec.obs.push({x:p.x,z:p.z,r:p.r*.9}); });
+    ch.decor.forEach(d=>{ if(ch.bi===1) put(G.cone,mt(d.c<.5?0x59b8ff:0xb36bff,.4,.9),d.x,d.s*.7,d.z,.3+d.s*.2,d.s*1.4,.3+d.s*.2); else if(ch.bi===4) put(G.oct,mt(d.c<.5?0x7a5cff:0x40ffe0,.3,.9),d.x,.8+d.s,d.z,.35*d.s+.2,.6*d.s+.3,.35*d.s+.2); else if(ch.bi===2) put(G.cone,mt(0x221010),d.x,d.s*.6,d.z,.3,d.s*1.2,.3); else if(ch.bi===3) put(G.box,mt(0x7a7058),d.x,.25,d.z,d.s*.6,.4,d.s*.5); else put(rg,mt(0x5a5163),d.x,.2,d.z,.3,.2,.3); });
+    const dug=profile.dug[rec.k]||{},now=Date.now();
+    ch.ores.forEach(o=>{ const d=o.wall?WALLD[ch.bi]:OD[o.idx],og=new THREE.Group(),body=new THREE.Mesh(rg,mt(d.c,.7)); body.scale.set(.8,.7,.8); body.position.y=.6; og.add(body);
+      if(o.wall){ body.scale.set(1.3,1.5,1.3); body.position.y=1.1; }
+      if(d.sc) for(let j=0;j<3;j++){ const sh=new THREE.Mesh(G.oct,mt(d.sc,.5,.6)); sh.scale.setScalar(.2); sh.position.set(Math.cos(j*2.1)*.55,.7+j*.12,Math.sin(j*2.1)*.55); og.add(sh); }
+      og.position.set(o.x,0,o.z); g.add(og); const c={x:o.x,z:o.z,r:o.wall?1.2:.85,off:false}; rec.obs.push(c);
+      const ob={d,hp:d.hp,g:og,c,x:o.x,z:o.z,t:0,ck:rec.k,i:o.i,perm:!!o.wall},dg=dug[o.i];
+      if(dg){ if(dg===-1){ ob.hp=0; og.visible=false; c.off=true; ob.t=1e9; } else if(now-dg<30000){ ob.hp=0; og.visible=false; c.off=true; ob.t=(30000-(now-dg))/1000; } else delete dug[o.i]; }
+      rec.ores.push(ob); });
+    const tr=TIER[ch.bi];
+    ch.chests.forEach(c=>{ const cg=new THREE.Group(),bx=new THREE.Mesh(G.box,mt(tr[0])),lg=new THREE.Group(),ld=new THREE.Mesh(G.box,mt(tr[1])),lk=new THREE.Mesh(G.box,mt(tr[2],.3,.9));
+      bx.scale.set(1,.6,.7); bx.position.y=.3; ld.scale.set(1,.25,.7); lg.position.set(0,.6,-.35); ld.position.set(0,.12,.35); lk.scale.set(.18,.2,.08); lk.position.set(0,.05,.72); lg.add(ld,lk); cg.add(bx,lg); cg.position.set(c.x,0,c.z); g.add(cg);
+      const a={type:'chest',x:c.x,z:c.z,data:c,lg,done:!!profile.chests[c.id],label:()=>c.lockedBy&&!profile.puzzles[c.lockedBy]?'封印的寶箱・先找出機關':'寶箱・按挖掘開啟'}; if(a.done) lg.rotation.x=-1.2; rec.acts.push(a); });
+    if(ch.pz){ const pz=ch.pz,solved=!!profile.puzzles[pz.id],cols=[0xff4040,0x4080ff,0xffd34a],nm=['紅','藍','金']; pz.prog=0;
+      for(let i=0;i<3;i++){ const an=Math.PI/2+i*2.094,x=pz.x+Math.cos(an)*4.2,z=pz.z+Math.sin(an)*4.2;
+        const m=new THREE.Mesh(G.box,new THREE.MeshStandardMaterial({color:cols[i],emissive:cols[i],emissiveIntensity:solved?1:.15,flatShading:true})); m.scale.set(.8,1.4,.8); m.position.set(x,.7,z); g.add(m); rec.own.push(m); rec.obs.push({x,z,r:.6});
+        rec.acts.push({type:'rune',x,z,idx:i,pz,mesh:m,done:false,label:()=>'符文石・'+nm[i]+'・按挖掘觸碰'}); }
+      put(G.box,mt(0x9a9080),pz.x-2.6,.6,pz.z,.25,1.2,.9);
+      rec.acts.push({type:'tablet',x:pz.x-2.6,z:pz.z,done:false,label:()=>'符文石板・按挖掘閱讀',text:'線索：先觸碰'+nm[pz.order[0]]+'，再'+nm[pz.order[1]]+'，最後'+nm[pz.order[2]]}); pz.runes=rec.own; }
+    return rec; }
+  const updateChunks=()=>{ const need=new Set(); for(let a=-1;a<=1;a++) for(let b=-1;b<=1;b++) need.add(key(curCx+a,curCz+b));
+    for(const [k,c] of chunks){ if(!need.has(k)){ S.remove(c.g); c.own.forEach(m=>m.material.dispose()); chunks.delete(k); } }
+    for(let a=-1;a<=1;a++) for(let b=-1;b<=1;b++){ const k=key(curCx+a,curCz+b); if(!chunks.has(k)){ const rec=buildChunk(getChunk(curCx+a,curCz+b)); S.add(rec.g); chunks.set(k,rec); } }
+    obst.length=0; ores.length=0; acts.length=0; rooms.length=0; for(const c of chunks.values()){ obst.push(...c.obs); ores.push(...c.ores); acts.push(...c.acts); rooms.push(...c.rooms); } };
+  const onBiome=()=>{ const b=BIOMES[curBi]; S.fog.color.set(b.c); S.background.set(b.c); ceil.material.color.set(b.cc); $('bm').textContent=b.n; if(!profile.biomes[b.k]){ profile.biomes[b.k]=1; if(b.hint) toast(b.hint); save(); } };
+  const doAct=a=>{
+    if(a.type==='tablet'){ toast(a.text); return; }
+    if(a.type==='rune'){ const pz=a.pz; if(profile.puzzles[pz.id]){ toast('機關已經解開了'); return; }
+      if(pz.order[pz.prog]===a.idx){ pz.prog++; a.mesh.material.emissiveIntensity=1; burst(a.x,1,a.z,a.mesh.material.color.getHex(),6);
+        if(pz.prog>=3){ profile.puzzles[pz.id]=1; addPoi(pz.x,pz.z,'p'); toast('機關啟動！寶箱的封印解除了'); save(); setTimeout(checkAch,1700); } else toast('符文亮起 '+pz.prog+'/3'); }
+      else{ pz.prog=0; pz.runes.forEach(m=>m.material.emissiveIntensity=.15); toast('符文熄滅了，重新來過'); } return; }
+    const c=a.data; if(c.lockedBy&&!profile.puzzles[c.lockedBy]){ toast('寶箱被符文封印，找找附近的石板'); return; } if(profile.chests[c.id]) return;
+    profile.chests[c.id]=1; a.done=true; a.lg.rotation.x=-1.2; profile.coins=(profile.coins||0)+c.coins; const nw=!profile.relics[c.relic]; profile.relics[c.relic]=1; addPoi(c.x,c.z,'c'); refresh();
+    burst(c.x,1,c.z,0xffd34a,16); toast('寶箱 +'+c.coins.toLocaleString()+' 金・'+(nw?'NEW ':'')+c.relic); save(); setTimeout(checkAch,1700); };
+  const oreRad=()=>[0,40,80,140][profile.oreLv||0],chestRad=()=>[0,40,80,140][profile.chestLv||0];
+  const scan=()=>{ const ro=oreRad(),rc=chestRad(),R=Math.max(ro,rc); if(!R){ $('scn').textContent=''; return; } const px=P.position.x,pz=P.position.z; let bo=1e9,bc=1e9;
+    for(let a=Math.floor((px-R)/CS);a<=Math.floor((px+R)/CS);a++) for(let b=Math.floor((pz-R)/CS);b<=Math.floor((pz+R)/CS);b++){ const c=getChunk(a,b),dg=profile.dug[a+','+b]||{};
+      if(ro) c.ores.forEach(o=>{ if(!o.wall&&OD[o.idx].p>=900&&!dg[o.i]){ const m=Math.hypot(o.x-px,o.z-pz); if(m<bo) bo=m; } });
+      if(rc){ c.chests.forEach(k=>{ if(!profile.chests[k.id]){ const m=Math.hypot(k.x-px,k.z-pz); if(m<bc) bc=m; } }); c.rooms.forEach(r=>{ if(!profile.rooms[r.id]){ const m=Math.hypot(r.x-px,r.z-pz); if(m<bc) bc=m; } }); } }
+    const s=[]; if(ro&&bo<=ro) s.push('📡 稀有礦 '+Math.round(bo)+'m'); if(rc&&bc<=rc) s.push('🧭 寶藏 '+Math.round(bc)+'m'); $('scn').textContent=s.join('　'); };
+  window.pp=()=>[P.position.x,P.position.z];
+  window.tp=(x,z)=>{ P.position.set(x,0,z); curCx=Math.floor(x/CS); curCz=Math.floor(z/CS); updateChunks(); addExp(curCx,curCz);
+    for(let k=0;k<6;k++) for(const o of obst){ if(o.off) continue; const dx=P.position.x-o.x,dz=P.position.z-o.z,d=Math.hypot(dx,dz)||.01,mn=o.r+.6; if(d<mn){ P.position.x=o.x+dx/d*mn; P.position.z=o.z+dz/d*mn; } }
+    profile.x=P.position.x; profile.z=P.position.z; save(); };
+  curCx=Math.floor(P.position.x/CS); curCz=Math.floor(P.position.z/CS); updateChunks(); addExp(curCx,curCz);
   const pg=new THREE.BoxGeometry(.12,.12,.12),pts=[],drops=[];
   for(let i=0;i<40;i++){ const m=new THREE.Mesh(pg,new THREE.MeshBasicMaterial()); m.visible=false; S.add(m); pts.push({m,v:new THREE.Vector3(),l:0}); }
   const burst=(x,y,z,col,n)=>{ for(let i=0;i<n;i++){ const q=pts.find(q=>q.l<=0); if(!q) return; q.m.position.set(x,y,z); q.m.material.color.set(col); q.v.set((Math.random()-.5)*4,2+Math.random()*3,(Math.random()-.5)*4); q.l=.7; q.m.visible=true; } };
@@ -264,7 +262,7 @@ function startGame(){
       const wx=(ix*cy+iz*sy)/Math.hypot(ix,iz),wz=(-ix*sy+iz*cy)/Math.hypot(ix,iz);
       const sp=spdOf()*mag*dt; let nx=P.position.x+wx*sp,nz=P.position.z+wz*sp;
       for(const o of obst){ if(o.off)continue; const dx=nx-o.x,dz=nz-o.z,d=Math.hypot(dx,dz),mn=o.r+.4; if(d<mn){nx=o.x+dx/d*mn;nz=o.z+dz/d*mn;} }
-      const zc=zcOf(P.position.x); nx=Math.max(zc-SZ+1,Math.min(zc+SZ-1,nx)); nz=Math.max(-SZ+1,Math.min(SZ-1,nz));
+      
       P.position.x=nx;P.position.z=nz; face=Math.atan2(wx,wz); walk+=dt*10*mag;
     } else walk*=.9;
     let da=face-P.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); P.rotation.y+=da*Math.min(1,dt*12);
@@ -274,25 +272,28 @@ function startGame(){
     C.position.set(P.position.x+Math.sin(yaw)*Math.cos(pitch)*dist,P.position.y+1.6+Math.sin(pitch)*dist,P.position.z+Math.cos(yaw)*Math.cos(pitch)*dist);
     C.lookAt(P.position.x,1.4,P.position.z);
     torch.position.set(P.position.x,3.2,P.position.z);
-    const zc2=zcOf(P.position.x),dep=Math.round(Math.hypot(P.position.x-zc2,P.position.z))+({0:0,150:40,300:90,450:150})[zc2]; $('dp').textContent=dep;
+    const ccx=Math.floor(P.position.x/CS),ccz=Math.floor(P.position.z/CS); if(ccx!==curCx||ccz!==curCz){ curCx=ccx; curCz=ccz; updateChunks(); addExp(ccx,ccz); }
+    const dep=Math.round(Math.hypot(P.position.x,P.position.z)); $('dp').textContent=dep.toLocaleString(); const nb=biomeIdx(dep); if(nb!==curBi){ curBi=nb; onBiome(); } ceil.position.x=P.position.x; ceil.position.z=P.position.z;
     if(dep>(profile.maxDepth||0)){ profile.maxDepth=dep; checkAch(); }
     cd-=dt; swing=Math.max(0,swing-dt);
-    let tg=null,td=3; for(const o of ores){ if(o.hp<=0){ o.t-=dt; if(o.t<=0){o.hp=o.d.hp;o.g.visible=true;o.c.off=false;} continue; }
+    let tg=null,td=3; for(const o of ores){ if(o.hp<=0){ o.t-=dt; if(o.t<=0){o.hp=o.d.hp;o.g.visible=true;o.c.off=false; const q=profile.dug[o.ck]; if(q) delete q[o.i];} continue; }
       const dd=Math.hypot(o.x-P.position.x,o.z-P.position.z); if(dd<td){td=dd;tg=o;} }
     $('tg').textContent=tg?tg.d.n+' '+tg.hp+'/'+tg.d.hp+(curPw()<tg.d.min?'・需力'+tg.d.min:''):'';
-    ch=null; for(const c of chests){ if(!profile.chests[c.id]&&Math.hypot(c.x-P.position.x,c.z-P.position.z)<2.6){ ch=c; break; } }
-    if(ch) $('tg').textContent='寶箱・按挖掘開啟';
+    let act=null,ad=2.6; for(const a of acts){ if(a.done) continue; const d=Math.hypot(a.x-P.position.x,a.z-P.position.z); if(d<ad){ ad=d; act=a; } }
+    if(act) $('tg').textContent=act.label();
+    for(const r of rooms){ if(!profile.rooms[r.id]&&Math.hypot(r.x-P.position.x,r.z-P.position.z)<5){ profile.rooms[r.id]=1; addPoi(r.x,r.z,'r'); toast('發現秘密房間！'); save(); setTimeout(checkAch,1700); } }
+    scanT-=dt; if(scanT<=0){ scanT=.6; scan(); }
     if(digReq){ digReq=false;
-      if(ch) openChest(ch);
+      if(act) doAct(act);
       else if(!tg) toast('附近沒有礦石');
       else if(curPw()<tg.d.min) toast('挖掘力不足，需要 '+tg.d.min);
       else if(used()>=capOf()) toast('背包已滿，請先出售');
       else if(cd<=0){ cd=.45; swing=.35; face=Math.atan2(tg.x-P.position.x,tg.z-P.position.z); tg.hp-=curPw(); profile.hits=(profile.hits||0)+1;
         burst(tg.x,.8,tg.z,tg.d.c,6);
-        if(tg.hp<=0){ tg.hp=0; tg.g.visible=false; tg.c.off=true; tg.t=30; burst(tg.x,.8,tg.z,tg.d.sc||tg.d.c,14);
-          const dm=new THREE.Mesh(pg,new THREE.MeshBasicMaterial({color:tg.d.sc||tg.d.c})); dm.scale.setScalar(2); dm.position.set(tg.x,.8,tg.z); S.add(dm); drops.push({m:dm,t:0});
+        if(tg.hp<=0){ tg.hp=0; tg.g.visible=false; tg.c.off=true; tg.t=tg.perm?1e9:30; (profile.dug[tg.ck]=profile.dug[tg.ck]||{})[tg.i]=tg.perm?-1:Date.now(); burst(tg.x,.8,tg.z,tg.d.sc||tg.d.c,14);
+          if(tg.d.id==='wall'){ toast('岩壁崩塌了！'); save(); } else { const dm=new THREE.Mesh(pg,new THREE.MeshBasicMaterial({color:tg.d.sc||tg.d.c})); dm.scale.setScalar(2); dm.position.set(tg.x,.8,tg.z); S.add(dm); drops.push({m:dm,t:0});
           profile.found=profile.found||{}; const first=!profile.found[tg.d.id]; profile.found[tg.d.id]=1; profile.inv[tg.d.id]=(profile.inv[tg.d.id]||0)+1; profile.mined=(profile.mined||0)+1; refresh();
-          toast((first?'NEW！ ':'')+'獲得 '+tg.d.n); save(); setTimeout(checkAch,1700); } } }
+          toast((first?'NEW！ ':'')+'獲得 '+tg.d.n); save(); setTimeout(checkAch,1700); } } } }
     for(const q of pts){ if(q.l>0){ q.l-=dt; q.v.y-=9*dt; q.m.position.addScaledVector(q.v,dt); if(q.l<=0) q.m.visible=false; } }
     for(let i=drops.length-1;i>=0;i--){ const d=drops[i]; d.t+=dt; d.m.position.lerp(new THREE.Vector3(P.position.x,1.2,P.position.z),Math.min(1,d.t*3)); if(d.t>.5){ S.remove(d.m); d.m.material.dispose(); drops.splice(i,1); } }
     saveT+=dt; if(saveT>8){saveT=0;profile.x=P.position.x;profile.z=P.position.z;save();}
@@ -325,37 +326,85 @@ function renderShop(){ $('shopc').textContent='目前金幣：'+(profile.coins||
       refresh(); save(); renderShop(); checkAch(); };
     r.append(sw,t,b); l.append(r); }); upRows(l); }
 $('shop').onclick=()=>{ $('shopmsg').textContent=''; renderShop(); $('shopp').style.display='flex'; };
-const RL=['古代硬幣','破損陶片','遺跡碎片','化石牙齒','古老徽章'];
-const CX=[['stone','普通石塊','普通',5,0x8a8a8a],['coal','煤礦','普通',12,0x666677],['copper','銅礦','不常見',30,0xff9a4a],['iron','鐵礦','不常見',55,0xe8e0d8],['gold','黃金礦','稀有',180,0xffd34a],['bcrystal','藍水晶','稀有',350,0x59b8ff],['amethyst','紫水晶','史詩',900,0xb36bff],['ruby','紅寶石礦','史詩',1800,0xff4a6a],['lava','熔岩礦','傳說',5000,0xff7a1a],['meteor','星隕礦','傳說',12000,0x8a7aff],['fossil','遠古化石礦','神話',30000,0xd8c9a0],['void','虛空核心','神話',80000,0xc040ff]];
-const RC={'普通':'#bbb','不常見':'#6fdc6f','稀有':'#59b8ff','史詩':'#c07bff','傳說':'#ffb030','神話':'#ff5a7a'};
-const rk=r=>['普通','不常見','稀有','史詩','傳說','神話'].indexOf(r);
-const ACH=[['mine','首次挖礦',p=>(p.hits||0)>0],['coal','首次取得煤礦',p=>(p.found||{}).coal],['sell','首次出售礦物',p=>(p.sold||0)>0],['buy','購買第一把新十字鎬',p=>(p.owned||[]).length>1],['rare','發現第一種稀有礦石',p=>CX.some(c=>rk(c[2])>=2&&(p.found||{})[c[0]])],['all','收集 12 種礦石',p=>Object.keys(p.found||{}).length>=12],['zone','解鎖新礦區',p=>!!(p.zones&&p.zones.crystal)],['depth','探索深度達 30m',p=>(p.maxDepth||0)>=30]];
+const CX=[['stone','普通石塊','普通',5,0x8a8a8a],['coal','煤礦','普通',12,0x666677],['copper','銅礦','不常見',30,0xff9a4a],['iron','鐵礦','不常見',55,0xe8e0d8],['gold','黃金礦','稀有',180,0xffd34a],['bcrystal','藍水晶','稀有',350,0x59b8ff],['amethyst','紫水晶','史詩',900,0xb36bff],['ruby','紅寶石礦','史詩',1800,0xff4a6a],['lava','熔岩礦','傳說',5000,0xff7a1a],['meteor','星隕礦','傳說',12000,0x8a7aff],['fossil','遠古化石礦','神話',30000,0xd8c9a0],['void','虛空核心','神話',80000,0xc040ff],['abyss','深淵晶','深淵',150000,0x7a5cff],['prism','稜光晶','深淵',400000,0x40ffe0]];
+const RC={'普通':'#bbb','不常見':'#6fdc6f','稀有':'#59b8ff','史詩':'#c07bff','傳說':'#ffb030','神話':'#ff5a7a','深淵':'#7a5cff'};
+const rk=r=>['普通','不常見','稀有','史詩','傳說','神話','深淵'].indexOf(r);
+const ACH=[['mine','首次挖礦',p=>(p.hits||0)>0],['coal','首次取得煤礦',p=>(p.found||{}).coal],['sell','首次出售礦物',p=>(p.sold||0)>0],['buy','購買第一把新十字鎬',p=>(p.owned||[]).length>1],['rare','發現第一種稀有礦石',p=>CX.some(c=>rk(c[2])>=2&&(p.found||{})[c[0]])],['all','收集全部礦石',p=>Object.keys(p.found||{}).length>=CX.length],['zone','解鎖新礦區',p=>!!(p.zones&&p.zones.crystal)],['depth','探索深度達 30m',p=>(p.maxDepth||0)>=30],['d500','抵達螢光洞窟（500m）',p=>(p.maxDepth||0)>=500,500],['d1500','抵達熔岩地層（1,500m）',p=>(p.maxDepth||0)>=1500,2000],['d3000','抵達遠古遺跡（3,000m）',p=>(p.maxDepth||0)>=3000,8000],['d5000','抵達深淵晶域（5,000m）',p=>(p.maxDepth||0)>=5000,30000],['d10000','深度突破 10,000m',p=>(p.maxDepth||0)>=10000,100000],['room','發現第一個秘密房間',p=>Object.keys(p.rooms||{}).length>0,300],['puzzle','解開第一個遺跡機關',p=>Object.keys(p.puzzles||{}).length>0,5000]];
 function two(a,b){ const t=document.createElement('span'); t.className='two'; t.textContent=a; const m=document.createElement('small'); m.textContent=b; t.append(m); return t; }
 function gt(t){ const e=$('toast'); e.textContent=t; e.style.opacity=1; clearTimeout(gt.h); gt.h=setTimeout(()=>e.style.opacity=0,1800); }
-function checkAch(){ if(!profile||!profile.ach) return; let n=0; ACH.forEach(a=>{ if(!profile.ach[a[0]]&&a[2](profile)){ profile.ach[a[0]]=1; n++; gt('🏆 成就：'+a[1]); } }); if(n) save(); }
-$('cx').onclick=()=>{ const f=profile.found||{}; $('cxc').textContent='已發現 '+Object.keys(f).length+' / 12'; const l=$('cxl'); l.innerHTML='';
+function checkAch(){ if(!profile||!profile.ach) return; let n=0; ACH.forEach(a=>{ if(!profile.ach[a[0]]&&a[2](profile)){ profile.ach[a[0]]=1; n++; if(a[3]){ profile.coins=(profile.coins||0)+a[3]; refresh(); } gt('🏆 成就：'+a[1]+(a[3]?' +'+a[3].toLocaleString()+' 金':'')); } }); if(n) save(); }
+$('cx').onclick=()=>{ const f=profile.found||{}; $('cxc').textContent='已發現 '+Object.keys(f).length+' / '+CX.length; const l=$('cxl'); l.innerHTML='';
   CX.forEach(c=>{ const k=!!f[c[0]],r=document.createElement('div'); r.className='row'; const sw=document.createElement('div'); sw.className='sw'; sw.style.background=k?hex(c[4]):'#15121c';
     const t=two(k?c[1]:'？？？',k?c[2]+'・'+c[3].toLocaleString()+' 金':'未發現'); if(k) t.firstChild.parentNode.querySelector('small').style.color=RC[c[2]]; r.append(sw,t); l.append(r); }); $('cxp').style.display='flex'; };
 $('tr').onclick=()=>{ const p=profile,l=$('trl'); l.innerHTML=''; const row=(a,b)=>{ const r=document.createElement('div'); r.className='row'; const x=document.createElement('span'); x.textContent=a; const y=document.createElement('span'); y.textContent=b; r.append(x,y); l.append(r); };
-  row('累積挖掘次數',(p.hits||0)); row('累積取得礦物',(p.mined||0)); row('累積出售金額',(p.sold||0).toLocaleString()+' 金'); row('已發現礦物',Object.keys(p.found||{}).length+' / 12'); row('最深深度',(p.maxDepth||0)+' m'); row('古代遺物',Object.keys(p.relics||{}).length+' / '+RL.length); row('已解鎖區域',(1+Object.keys(p.zones||{}).length)+' / 4');
+  row('累積挖掘次數',(p.hits||0)); row('累積取得礦物',(p.mined||0)); row('累積出售金額',(p.sold||0).toLocaleString()+' 金'); row('已發現礦物',Object.keys(p.found||{}).length+' / '+CX.length); row('最深深度',(p.maxDepth||0)+' m'); row('古代遺物',Object.keys(p.relics||{}).length+' / '+RL.length); row('已解鎖區域',(1+Object.keys(p.zones||{}).length)+' / 4');
   const h=document.createElement('div'); h.className='note'; h.style.margin='10px 0 2px'; h.textContent='成就'; l.append(h); ACH.forEach(a=>row((p.ach&&p.ach[a[0]]?'✅ ':'⬜ ')+a[1],'')); const eb=document.createElement('button'); eb.className='b s'; eb.textContent='匯出存檔碼'; eb.onclick=exportSave; if(profile.name==='Hermes') l.append(eb); $('trp').style.display='flex'; };
-['bagp','admp','shopp','cxp','trp','zonp'].forEach(i=>{ const sc=$(i); const x=document.createElement('button'); x.className='x'; x.textContent='✕'; x.onclick=()=>sc.style.display='none'; sc.firstElementChild.prepend(x); sc.addEventListener('click',e=>{ if(e.target===sc) sc.style.display='none'; }); });
+['bagp','admp','shopp','cxp','trp','zonp','mpp'].forEach(i=>{ const sc=$(i); const x=document.createElement('button'); x.className='x'; x.textContent='✕'; x.onclick=()=>sc.style.display='none'; sc.firstElementChild.prepend(x); sc.addEventListener('click',e=>{ if(e.target===sc) sc.style.display='none'; }); });
 function askPw(){ return new Promise(res=>{ const p=$('pwp'); $('pwi').value=''; $('pwm').textContent=''; p.style.display='flex'; const done=v=>{ p.style.display='none'; res(v); };
   $('pwok').onclick=()=>{ if($('pwi').value==='2468') done(true); else $('pwm').textContent='密碼錯誤'; }; $('pwno').onclick=()=>done(false); }); }
-const ZN=[['crystal','水晶洞窟',150,'steel','鐵鋼鎬',1000],['lava','熔岩深層',300,'crystal','水晶鎬',10000],['ruins','遠古遺跡',450,'obsidian','黑曜鎬',100000]];
 function renderZones(){ const l=$('zonl'); l.innerHTML='';
-  const row=(n,sub,label,fn)=>{ const r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'; b.textContent=label; b.onclick=fn; r.append(two(n,sub),b); l.append(r); };
-  row('普通礦坑','已開放','前往',()=>go(0));
-  ZN.forEach(z=>{ const un=!!profile.zones[z[0]]; row(z[1],un?'已解鎖':'需'+z[4]+'＋'+z[5].toLocaleString()+' 金',un?'前往':'解鎖',()=>{ if(un) return go(z[2]); const m=$('zonm'); m.className='msg';
-    if(!(profile.owned||[]).includes(z[3])) return m.textContent='需先購買'+z[4];
-    if((profile.coins||0)<z[5]) return m.textContent='金幣不足，還差 '+(z[5]-(profile.coins||0)).toLocaleString()+' 金';
-    profile.coins-=z[5]; profile.zones[z[0]]=1; refresh(); save(); checkAch(); m.className='msg ok'; m.textContent='已解鎖'+z[1]; renderZones(); }); }); }
-function go(x){ if(window.tp) tp(x,x?4:0); $('zonp').style.display='none'; gt({0:'回到普通礦坑',150:'抵達水晶洞窟',300:'抵達熔岩深層',450:'抵達遠古遺跡'}[x]); }
+  const row=(n,sub,label,fn,dis)=>{ const r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'+(dis?' s':''); b.textContent=label; b.disabled=!!dis; b.onclick=fn; r.append(two(n,sub),b); l.append(r); };
+  row('出生點','礦坑入口','前往',()=>go(0,0));
+  BIOMES.forEach((b,i)=>{ if(!i) return; const old=profile.zones&&profile.zones[['','crystal','lava','ruins',''][i]],un=(profile.maxDepth||0)>=b.a||old; row(b.n,un?b.a.toLocaleString()+' m 起':'需先抵達 '+b.a.toLocaleString()+' m',un?'前往':'未解鎖',()=>go(b.a+15,0),!un); }); }
+function go(x,z){ if(window.tp) tp(x,z); $('zonp').style.display='none'; gt('已傳送'); }
+function drawMap(){ const cv=$('mpc'),g=cv.getContext('2d'),N=36,cell=8,pp=window.pp?window.pp():[0,0],pcx=Math.floor(pp[0]/CS),pcz=Math.floor(pp[1]/CS);
+  g.fillStyle='#0d0b12'; g.fillRect(0,0,288,288);
+  for(let r=0;r<N;r++){ const cz=pcz-N/2+r,row=(profile.exp||{})[cz]; if(!row) continue; for(const iv of row) for(let cx=Math.max(iv[0],pcx-N/2);cx<=Math.min(iv[1],pcx+N/2-1);cx++){ g.fillStyle=BIOMES[biomeIdx(Math.hypot((cx+.5)*CS,(cz+.5)*CS))].mm; g.fillRect((cx-(pcx-N/2))*cell,r*cell,cell-1,cell-1); } }
+  const wx=x=>(x/CS-(pcx-N/2))*cell,wz=z=>(z/CS-(pcz-N/2))*cell;
+  (profile.poi||[]).forEach(p=>{ g.fillStyle=p[2]==='c'?'#ffd34a':p[2]==='r'?'#c070ff':'#40e0d0'; g.fillRect(wx(p[0])-2,wz(p[1])-2,5,5); });
+  g.strokeStyle='#fff'; g.strokeRect(wx(0)-3,wz(0)-3,6,6); g.fillStyle='#fff'; g.beginPath(); g.arc(wx(pp[0]),wz(pp[1]),4,0,7); g.fill(); }
+$('mp').onclick=()=>{ drawMap(); const l=$('mpi'); l.innerHTML=''; const p=profile,ks=Object.keys,
+  row=(a,b)=>{ const r=document.createElement('div'); r.className='row'; const x=document.createElement('span'); x.textContent=a; const y=document.createElement('span'); y.textContent=b; r.append(x,y); l.append(r); };
+  row('歷史最深',(p.maxDepth||0).toLocaleString()+' m'); row('已抵達區域',BIOMES.filter(b=>(p.maxDepth||0)>=b.a).length+' / '+BIOMES.length); row('已發現礦物',ks(p.found||{}).length+' / '+CX.length);
+  row('已開啟寶箱',ks(p.chests||{}).filter(k=>k[0]==='k').length); row('秘密房間',ks(p.rooms||{}).length); row('完成遺跡機關',ks(p.puzzles||{}).length); row('收集遺物',ks(p.relics||{}).length+' / '+RL.length);
+  $('mpp').style.display='flex'; };
 $('zn').onclick=()=>{ $('zonm').textContent=''; renderZones(); $('zonp').style.display='flex'; };
-addEventListener('pagehide',()=>save()); const CAPS=[50,100,200,400,800],SPDS=[5,6,7,8];
+addEventListener('pagehide',()=>save()); 
+/*GEN-START*/
+const CS=36;
+const BIOMES=[
+{k:'surface',n:'表層礦脈',a:0,g:0x3b3340,rk:[0x5a5163,0x4d4457],c:0x0b0910,cc:0x1a1620,mm:'#6a6070',hint:''},
+{k:'glow',n:'螢光洞窟',a:500,g:0x2c2c4e,rk:[0x4a4a7a,0x3d3d68],c:0x0a0a1c,cc:0x151530,mm:'#3a6ac0',hint:'螢光洞窟：留意水池與發光水晶，岩壁後可能藏著秘密房間'},
+{k:'lava',n:'熔岩地層',a:1500,g:0x3a1a14,rk:[0x4a2a22,0x3a1e1a],c:0x2a0a05,cc:0x1a0a08,mm:'#d0502a',hint:'熔岩地層：岩漿池擋路，需要繞行'},
+{k:'ruins',n:'遠古遺跡',a:3000,g:0x4a4638,rk:[0x6a634e,0x585240],c:0x08161a,cc:0x1a1812,mm:'#b0a070',hint:'遠古遺跡：留意符文石與石板，也許能解開封印'},
+{k:'abyss',n:'深淵晶域',a:5000,g:0x1c1030,rk:[0x2a1a4a,0x35205a],c:0x07040f,cc:0x0d0818,mm:'#7a5cff',hint:'深淵晶域：稀有晶體聚集的地方，這裡沒有盡頭'}];
+const ORE_W=[[[0,.4],[1,.7],[2,.87],[3,1]],[[2,.15],[3,.3],[4,.55],[5,.78],[6,.92],[7,1]],[[7,.2],[8,.6],[9,.9],[6,1]],[[9,.2],[10,.65],[11,.9],[7,1]],[[10,.2],[11,.45],[12,.75],[13,1]]];
+const WALLD=[{id:'wall',n:'裂縫岩壁',hp:60,min:5,c:0x6a6070,sc:0,p:0},{id:'wall',n:'裂縫岩壁',hp:400,min:22,c:0x4a4a7a,sc:0,p:0},{id:'wall',n:'裂縫岩壁',hp:2000,min:90,c:0x4a2a22,sc:0,p:0},{id:'wall',n:'裂縫岩壁',hp:6000,min:350,c:0x6a634e,sc:0,p:0},{id:'wall',n:'裂縫岩壁',hp:20000,min:1000,c:0x2a1a4a,sc:0,p:0}];
+const RLB=[['古代硬幣','破損陶片'],['螢光孢子罐','水晶雕飾'],['熔岩鑄印','焦黑戰旗'],['遺跡碎片','古老徽章','化石牙齒','符文石板'],['深淵之眼','稜晶殘片']];
+const RL=[].concat(...RLB);
+function mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; }; }
+const biomeIdx=r=>{ let b=0; BIOMES.forEach((x,i)=>{ if(r>=x.a) b=i; }); return b; };
+function genChunk(cx,cz,seed){
+  const rnd=mulberry(((cx*73856093)^(cz*19349663)^seed)>>>0),x0=cx*CS,z0=cz*CS,bi=biomeIdx(Math.hypot(x0+CS/2,z0+CS/2));
+  const ch={cx,cz,bi,rocks:[],pools:[],decor:[],ores:[],chests:[],rooms:[],pz:null},used=[];
+  const free=(x,z,r)=>Math.hypot(x,z)>7&&used.every(u=>Math.hypot(x-u[0],z-u[1])>u[2]+r);
+  const pos=(r,m=3)=>{ for(let k=0;k<14;k++){ const x=x0+m+rnd()*(CS-2*m),z=z0+m+rnd()*(CS-2*m); if(free(x,z,r)) return [x,z]; } return null; };
+  const pickOre=hi=>{ const r=hi?.5+rnd()*.5:rnd(); return ORE_W[bi].find(x=>r<=x[1])[0]; };
+  const coin=m=>Math.round((60+rnd()*100)*(1+bi*bi*3)*m),relic=()=>RLB[bi][Math.floor(rnd()*RLB[bi].length)];
+  let cn=0; const addChest=(x,z,ex)=>{ ch.chests.push(Object.assign({id:'k'+cx+'_'+cz+'_'+(cn++),x,z,coins:coin(1),relic:relic()},ex||{})); };
+  const addOre=(idx,x,z,o)=>{ ch.ores.push(Object.assign({idx,x,z,i:ch.ores.length},o||{})); };
+  if(rnd()<[.25,.3,.3,.35,.35][bi]){ const x=x0+9+rnd()*(CS-18),z=z0+9+rnd()*(CS-18); if(free(x,z,7)){ used.push([x,z,7]); const g=Math.floor(rnd()*16);
+    for(let i=0;i<16;i++){ const a=i/16*Math.PI*2,px=x+Math.cos(a)*5,pz=z+Math.sin(a)*5; if(i===g) addOre(-1,px,pz,{wall:1}); else ch.rocks.push({x:px,z:pz,r:1.3,h:2.2,col:i%2}); }
+    ch.rooms.push({id:'r'+cx+'_'+cz,x,z}); addChest(x,z,{coins:coin(2.5),room:1}); for(let j=0;j<2;j++) addOre(pickOre(true),x+(j?2.4:-2.4),z+1.5); } }
+  if(bi===3&&rnd()<.35){ const x=x0+8+rnd()*(CS-16),z=z0+8+rnd()*(CS-16); if(free(x,z,6)){ used.push([x,z,6]); const o=[0,1,2]; for(let i=2;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=o[i]; o[i]=o[j]; o[j]=t; }
+    ch.pz={id:'p'+cx+'_'+cz,x,z,order:o}; addChest(x,z,{coins:coin(2),relic:'符文石板',lockedBy:ch.pz.id}); } }
+  const nr=(bi===2?10:bi===3?7:14)+Math.floor(rnd()*5);
+  for(let i=0;i<nr;i++){ const r=.8+rnd()*1.6,p=pos(r+.3); if(!p) continue; used.push([p[0],p[1],r]); ch.rocks.push({x:p[0],z:p[1],r:r*.95,h:r*(1+rnd()*2),col:i%2}); }
+  if(rnd()<.55){ const s=pos(1.5); if(s){ const a=rnd()*6.28,n=6+Math.floor(rnd()*5),gap=2+Math.floor(rnd()*(n-3));
+    for(let i=0;i<n;i++){ if(i===gap||i===gap+1) continue; const px=s[0]+Math.cos(a)*i*2,pz=s[1]+Math.sin(a)*i*2; if(px<x0+1||px>x0+CS-1||pz<z0+1||pz>z0+CS-1||!free(px,pz,1.1)) continue; used.push([px,pz,1.1]); ch.rocks.push({x:px,z:pz,r:1.1,h:2.4,col:i%2}); } } }
+  if(bi===2){ const n=3+Math.floor(rnd()*3); for(let i=0;i<n;i++){ const r=2+rnd()*2.5,p=pos(r+.5); if(!p) continue; used.push([p[0],p[1],r]); ch.pools.push({x:p[0],z:p[1],r,col:i%2?0xff5a10:0xffa020,solid:1}); } }
+  if(bi===1){ for(let i=0;i<2;i++){ const r=2+rnd()*2,p=pos(r); if(!p) continue; used.push([p[0],p[1],r*.6]); ch.pools.push({x:p[0],z:p[1],r,col:0x2a6aff}); } }
+  if(bi===3){ const n=4+Math.floor(rnd()*4); for(let i=0;i<n;i++){ const p=pos(1); if(!p) continue; used.push([p[0],p[1],.8]); ch.rocks.push({x:p[0],z:p[1],r:.7,h:3+rnd()*3,pillar:1}); } }
+  const no=7+Math.floor(rnd()*4);
+  for(let i=0;i<no;i++){ const idx=pickOre(false),p=pos(1.2); if(!p) continue; used.push([p[0],p[1],.9]); addOre(idx,p[0],p[1]); }
+  const nd=bi===1?9:bi===4?10:bi===2?5:3; for(let i=0;i<nd;i++) ch.decor.push({x:x0+1+rnd()*(CS-2),z:z0+1+rnd()*(CS-2),s:.5+rnd()*1.2,c:rnd()});
+  if(rnd()<.14){ const p=pos(1.5); if(p){ used.push([p[0],p[1],1.2]); addChest(p[0],p[1]); } }
+  return ch; }
+/*GEN-END*/
+const CAPS=[50,100,200,400,800],SPDS=[5,6,7,8];
 const capOf=()=>CAPS[(profile&&profile.bagLv)||0], spdOf=()=>SPDS[(profile&&profile.spdLv)||0], used=()=>Object.values((profile&&profile.inv)||{}).reduce((a,b)=>a+b,0);
 function zcOf(x){ return x>375?450:x>225?300:x>75?150:0; }
-function upRows(l){ [['bagLv','背包容量',CAPS,[300,1500,8000,40000],'🎒'],['spdLv','移動速度',SPDS,[500,3000,20000],'👟']].forEach(d=>{ const lv=profile[d[0]]||0,done=lv>=d[2].length-1,price=d[3][lv],r=document.createElement('div'); r.className='row';
+function upRows(l){ [['bagLv','背包容量',CAPS,[300,1500,8000,40000],'🎒'],['spdLv','移動速度',SPDS,[500,3000,20000],'👟'],['oreLv','礦脈探測',[0,40,80,140],[3000,25000,150000],'📡'],['chestLv','寶藏探測',[0,40,80,140],[4000,30000,200000],'🧭']].forEach(d=>{ const lv=profile[d[0]]||0,done=lv>=d[2].length-1,price=d[3][lv],r=document.createElement('div'); r.className='row';
   const b=document.createElement('button'); b.className='b'+(done?' s':''); b.disabled=done; b.textContent=done?'已滿級':price.toLocaleString()+' 金';
   b.onclick=()=>{ const m=$('shopmsg'); if((profile.coins||0)<price){ m.className='msg'; m.textContent='金幣不足，還差 '+(price-(profile.coins||0)).toLocaleString()+' 金'; return; } profile.coins-=price; profile[d[0]]=lv+1; refresh(); save(); m.className='msg ok'; m.textContent=d[1]+'已升級'; renderShop(); };
   r.append(two(d[4]+' '+d[1]+' Lv'+(lv+1),(done?'':d[2][lv]+' → ')+d[2][done?lv:lv+1]),b); l.append(r); }); }
@@ -461,5 +510,7 @@ async function bootSB(){
   if(ss&&ss.refresh_token){ sbS=ss; $('st').textContent='登入中…'; if(await sbRefresh()&&await sbLoad()) return startGame(); sbS=null; }
   $('st').textContent='線上帳號'; showForm('menu'); }
 $('rn').oninput=()=>{ $('imp').style.display=((localMode||!!SB_URL)&&$('rn').value.trim().toLowerCase()==='hermes')?'block':'none'; };
+document.addEventListener('gesturestart',e=>e.preventDefault());
+let lastTap=0; document.addEventListener('touchend',e=>{ const t=e.target; if(['cv','joy','knob','dig','tip'].includes(t.id)){ const n=Date.now(); if(n-lastTap<350) e.preventDefault(); lastTap=n; } },{passive:false});
 boot2();
 </script></body></html>
