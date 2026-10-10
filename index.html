@@ -86,7 +86,7 @@ textarea,input{font-size:16px !important}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const SB_URL='',SB_KEY='';
+const SB_URL='https://fzdguxbwpavbmckorzyc.supabase.co',SB_KEY='sb_publishable_H795alzKum-YluKND1n3Eg_HY5y_qhA';
 let sbMode=false,sbS=null,sbSaving=false,sbDirty=false;
 let db=null,uid=null,profile=null,offline=false,running=false,saveT=0,isAdmin=false;
 const OD=[{id:'stone',n:'普通石塊',hp:20,min:5,c:0x8a8a8a,sc:0,p:5},{id:'coal',n:'煤礦',hp:40,min:5,c:0x2a2a30,sc:0x666677,p:12},{id:'copper',n:'銅礦',hp:80,min:10,c:0x8a5a3a,sc:0xff9a4a,p:30},{id:'iron',n:'鐵礦',hp:120,min:10,c:0x8f8580,sc:0xe8e0d8,p:55},{id:'gold',n:'黃金礦',hp:200,min:22,c:0x8a7a2a,sc:0xffd34a,p:180},{id:'bcrystal',n:'藍水晶',hp:300,min:22,c:0x2a5a8a,sc:0x59b8ff,p:350},{id:'amethyst',n:'紫水晶',hp:600,min:45,c:0x5a2a8a,sc:0xb36bff,p:900},{id:'ruby',n:'紅寶石礦',hp:800,min:45,c:0x8a2a3a,sc:0xff4a6a,p:1800},{id:'lava',n:'熔岩礦',hp:1500,min:90,c:0x5a1a0a,sc:0xff7a1a,p:5000},{id:'meteor',n:'星隕礦',hp:2500,min:180,c:0x2a2a4a,sc:0x8a7aff,p:12000},{id:'fossil',n:'遠古化石礦',hp:5000,min:350,c:0x6a5a3a,sc:0xd8c9a0,p:30000},{id:'void',n:'虛空核心',hp:8000,min:700,c:0x2a0a3a,sc:0xc040ff,p:80000},{id:'abyss',n:'深淵晶',hp:15000,min:1000,c:0x201040,sc:0x7a5cff,p:150000},{id:'prism',n:'稜光晶',hp:30000,min:1500,c:0x103040,sc:0x40ffe0,p:400000},{id:'omega',n:'終末晶核',hp:60000,min:2000,c:0x0a0a1a,sc:0xff3a6e,p:1000000}];
