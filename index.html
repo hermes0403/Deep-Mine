@@ -54,30 +54,32 @@ textarea,input{font-size:16px !important}
 #mpc{display:block;margin:6px 0}
 #pt{position:fixed;top:calc(114px + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;font-size:12px;color:#ffd34a;z-index:3;pointer-events:none}
 #tc{display:none}
+#vh{display:none}
+#cmp{position:fixed;left:12px;top:calc(64px + env(safe-area-inset-top,0px));width:52px;height:52px;border-radius:50%;background:#000a;border:1px solid #ffffff55;z-index:3;pointer-events:none;display:none}
+#cmpr{position:absolute;inset:0}
+#cmpr b{position:absolute;font-size:11px;line-height:1;color:#fff;transform:translate(-50%,-50%)}
+#cmpr b:nth-child(1){top:9px;left:50%;color:#ff5a5a}
+#cmpr b:nth-child(2){top:50%;left:calc(100% - 9px)}
+#cmpr b:nth-child(3){top:calc(100% - 9px);left:50%}
+#cmpr b:nth-child(4){top:50%;left:9px}
+#cmp u{position:absolute;left:50%;top:-5px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:7px solid #ffd34a;transform:translateX(-50%);text-decoration:none}
 </style></head><body>
 <canvas id="cv"></canvas>
 <div id="hud"><div>👤 <span id="pn">-</span>　💰 <span id="coin">0</span><br>⛏ <span id="pk">木製十字鎬</span>　🎒 <span id="cap">0/50</span></div><div>⬇ <span id="dp">0</span>m　<button id="out" class="b s ui" style="width:auto;margin:0;padding:4px 10px;font-size:13px">登出</button><br><span id="bm"></span></div></div>
 <div id="joy"><div id="knob"></div></div>
 <div id="tip">搖桿移動・拖曳轉視角</div>
 
-<div id="tg"></div><div id="scn"></div><div id="pt"></div><div id="toast"></div>
-<button class="ui" id="dig">⛏ 挖掘</button><div id="rail"><button class="ui" id="bag">🎒</button><button class="ui" id="shop">🛒</button><button class="ui" id="zn">🧭</button><button class="ui" id="cx">📖</button><button class="ui" id="mp">🗺</button><button class="ui" id="tc">🔦</button><button class="ui" id="tr">🏆</button><button class="ui" id="lb">🌐</button><button class="ui" id="adm">🛠</button></div>
-<div class="screen" id="lbp" style="display:none;z-index:8">
-  <div class="card">
-    <h1 style="font-size:22px">全球挖礦深度 TOP 10</h1>
-    <div id="lbl" class="note" style="white-space:normal">讀取中…</div>
-    <button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button>
-  </div><div class="screen" id="bagp" style="display:none"><div class="card"><h1 style="font-size:22px">背包</h1><div class="note" id="bagc"></div><div id="bagl"></div><div id="bagmsg" class="msg ok"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
-
-<div class="note" id="bagc"></div><div id="bagl"></div><div id="bagmsg" class="msg ok"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
+<div id="cmp"><div id="cmpr"><b>N</b><b>E</b><b>S</b><b>W</b></div><u></u></div><div id="tg"></div><div id="scn"></div><div id="pt"></div><div id="toast"></div>
+<button class="ui" id="dig">⛏ 挖掘</button><div id="rail"><button class="ui" id="bag">🎒</button><button class="ui" id="shop">🛒</button><button class="ui" id="vh">🛹</button><button class="ui" id="zn">🧭</button><button class="ui" id="cx">📖</button><button class="ui" id="mp">🗺</button><button class="ui" id="tc">🔦</button><button class="ui" id="adm">🛠</button></div>
+<div class="screen" id="bagp" style="display:none"><div class="card"><h1 style="font-size:22px">背包</h1><div class="note" id="bagc"></div><div id="bagl"></div><div id="bagmsg" class="msg ok"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="shopp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">商店</h1><div class="note" id="shopc"></div><div id="shopl"></div><div id="shopmsg" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="cxp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">礦物圖鑑</h1><div class="note" id="cxc"></div><div id="cxl"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
-<div class="screen" id="trp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">資料與成就</h1><div id="trl"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="zonp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">礦區</h1><div id="zonl"></div><div id="zonm" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="pwp" style="display:none;z-index:8"><div class="card"><h1 style="font-size:22px">管理員驗證</h1><div class="note">請輸入密碼</div><input id="pwi" type="password" inputmode="numeric" placeholder="密碼"><div id="pwm" class="msg"></div><button class="b" id="pwok">確認</button><button class="b s" id="pwno">取消</button></div></div>
 <div class="screen" id="rmp" style="display:none;z-index:8"><div class="card" style="text-align:center"><h1 style="font-size:22px">帳號建立成功</h1><div class="note" style="text-align:center">請牢記你的玩家名稱</div><div id="rmn" style="font-size:26px;font-weight:700;color:var(--ac);margin:12px 0;word-break:break-all"></div><div class="note" id="rmt" style="text-align:center"></div><div class="note" style="text-align:center">進度會自動永久保存</div><button class="b" id="rmok">我記住了，開始遊戲</button></div></div>
 <div class="screen" id="expp" style="display:none;z-index:8"><div class="card"><h1 style="font-size:22px">匯出存檔碼</h1><div class="note">貼到 GitHub 版註冊頁的匯入欄</div><textarea id="expt" readonly rows="4"></textarea><div id="expm" class="msg ok"></div><button class="b" id="expc">複製</button><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="mpp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">探勘地圖</h1><canvas id="mpc" width="288" height="288" style="width:100%"></canvas><div class="note" id="mpl" style="white-space:normal">⬜出生點　🟨寶箱　🟪秘密房間　🟦遺跡機關　🟧隱藏地點</div><div id="mpi"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
+<div class="screen" id="vhp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">載具</h1><div class="note" id="vhc"></div><div id="vhl"></div><div id="vhm" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="admp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">管理員面板</h1><div class="note">玩家清單與金幣發放（僅管理員可見）</div><div id="admlist"></div><button class="b s" onclick="renderAdm()">重新整理</button><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="title"><div class="card">
 <h1>深層礦域</h1><div class="sub">礦坑探索 試玩版</div>
@@ -94,10 +96,6 @@ textarea,input{font-size:16px !important}
 <script>
 const $=id=>document.getElementById(id);
 const SB_URL='',SB_KEY='';
-  
-const LB_URL='https://fzdguxbwpavbmckorzyc.supabase.co';
-const LB_KEY='sb_publishable_H795alzKum-YluKND1n3Eg_HY5y_qhA';
-
 let sbMode=false,sbS=null,sbSaving=false,sbDirty=false;
 let db=null,uid=null,profile=null,offline=false,running=false,saveT=0,isAdmin=false;
 const OD=[{id:'stone',n:'普通石塊',hp:20,min:5,c:0x8a8a8a,sc:0,p:5},{id:'coal',n:'煤礦',hp:40,min:5,c:0x2a2a30,sc:0x666677,p:12},{id:'copper',n:'銅礦',hp:80,min:10,c:0x8a5a3a,sc:0xff9a4a,p:30},{id:'iron',n:'鐵礦',hp:120,min:10,c:0x8f8580,sc:0xe8e0d8,p:55},{id:'gold',n:'黃金礦',hp:200,min:22,c:0x8a7a2a,sc:0xffd34a,p:180},{id:'bcrystal',n:'藍水晶',hp:300,min:22,c:0x2a5a8a,sc:0x59b8ff,p:350},{id:'amethyst',n:'紫水晶',hp:600,min:45,c:0x5a2a8a,sc:0xb36bff,p:900},{id:'ruby',n:'紅寶石礦',hp:800,min:45,c:0x8a2a3a,sc:0xff4a6a,p:1800},{id:'lava',n:'熔岩礦',hp:1500,min:90,c:0x5a1a0a,sc:0xff7a1a,p:5000},{id:'meteor',n:'星隕礦',hp:2500,min:180,c:0x2a2a4a,sc:0x8a7aff,p:12000},{id:'fossil',n:'遠古化石礦',hp:5000,min:350,c:0x6a5a3a,sc:0xd8c9a0,p:30000},{id:'void',n:'虛空核心',hp:8000,min:700,c:0x2a0a3a,sc:0xc040ff,p:80000},{id:'abyss',n:'深淵晶',hp:15000,min:1000,c:0x201040,sc:0x7a5cff,p:150000},{id:'prism',n:'稜光晶',hp:30000,min:1500,c:0x103040,sc:0x40ffe0,p:400000},{id:'omega',n:'終末晶核',hp:60000,min:2000,c:0x0a0a1a,sc:0xff3a6e,p:1000000}];
@@ -106,52 +104,6 @@ $('bag').onclick=()=>{ const l=$('bagl'); l.innerHTML=''; OD.forEach(o=>{const n
 $('adm').onclick=()=>{ $('admp').style.display='flex'; renderAdm(); };
 const msg=(t,ok)=>{$('msg').textContent=t||'';$('msg').className='msg'+(ok?' ok':'')};
 const nameKey=n=>[...n.toLowerCase()].map(c=>c.codePointAt(0).toString(16)).join('-');
-  
-async function loadLB(){
-  const l=$('lbl');
-  l.textContent='讀取中…';
-  try{
-    const r=await fetch(
-      LB_URL+'/rest/v1/mine_leaderboard?select=player_name,max_depth&order=max_depth.desc&limit=10',
-      {headers:{apikey:LB_KEY,Authorization:'Bearer '+LB_KEY}}
-    );
-    if(!r.ok) throw Error('讀取失敗');
-    const a=await r.json();
-    l.replaceChildren();
-    if(!a.length){l.textContent='目前還沒有排行榜資料';return;}
-    a.forEach((p,i)=>{
-      const d=document.createElement('div');
-      d.className='row';
-      d.textContent=(i+1)+'. '+p.player_name+'　'+Number(p.max_depth).toLocaleString()+' m';
-      l.append(d);
-    });
-  }catch(e){l.textContent='排行榜讀取失敗，請檢查 Supabase 設定';}
-}
-$('lb').onclick=()=>{$('lbp').style.display='flex';loadLB();};
-
-async function saveLB(){
-  if(!profile||offline)return;
-  try{
-    const key=nameKey(profile.name);
-    const r=await fetch(LB_URL+'/rest/v1/mine_leaderboard?on_conflict=player_key',{
-      method:'POST',
-      headers:{
-        apikey:LB_KEY,
-        Authorization:'Bearer '+LB_KEY,
-        'Content-Type':'application/json',
-        Prefer:'resolution=merge-duplicates,return=minimal'
-      },
-      body:JSON.stringify({
-        player_key:key,
-        player_name:profile.name,
-        max_depth:Math.floor(profile.maxDepth||0),
-        updated_at:new Date().toISOString()
-      })
-    });
-    if(!r.ok)console.warn('排行榜更新失敗',await r.text());
-  }catch(e){console.warn('排行榜連線失敗',e);}
-}
-
 const pdoc=()=>db.doc('data/users/'+uid+'/profile');
 
 async function boot(){
@@ -200,7 +152,7 @@ function startGame(){
   $('title').style.display='none';
   ['hud','joy','tip'].forEach(i=>$(i).style.display=(i==='hud'?'flex':'block'));
   $('pn').textContent=profile.name+(offline?'（離線）':'');
-  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('mp').style.display=$('cx').style.display=$('tr').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; profile.dug=profile.dug||{}; profile.exp=profile.exp||{}; profile.poi=profile.poi||[]; profile.rooms=profile.rooms||{}; profile.puzzles=profile.puzzles||{}; profile.biomes=profile.biomes||{}; if(!profile.seed) profile.seed=(Math.random()*4294967296)>>>0; profile.sites=profile.sites||{}; if(profile.xp==null) profile.xp=Math.min(400,Math.floor((profile.maxDepth||0)/5)); profile.pity=profile.pity||0; profile.sg=profile.sg||0; profile.pets=profile.pets||{own:{},eq:null}; profile.cache=profile.cache||{}; profile.recentT=profile.recentT||[]; if(profile.oreLv>0&&!profile.oreRef){ let sm=0; for(let i=0;i<profile.oreLv&&i<3;i++) sm+=[3000,25000,150000][i]; profile.coins=(profile.coins||0)+sm; profile.oreRef=1; gt('礦脈探測已移除，已退還 '+sm.toLocaleString()+' 金'); } profile.v2=1; refresh();
+  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('vh').style.display=$('zn').style.display=$('mp').style.display=$('cx').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; profile.dug=profile.dug||{}; profile.exp=profile.exp||{}; profile.poi=profile.poi||[]; profile.rooms=profile.rooms||{}; profile.puzzles=profile.puzzles||{}; profile.biomes=profile.biomes||{}; if(!profile.seed) profile.seed=(Math.random()*4294967296)>>>0; profile.sites=profile.sites||{}; if(profile.xp==null) profile.xp=Math.min(400,Math.floor((profile.maxDepth||0)/5)); profile.pity=profile.pity||0; profile.sg=profile.sg||0; profile.pets=profile.pets||{own:{},eq:null}; if(!profile.pets.own) profile.pets.own={}; profile.fit=profile.fit||{own:{},eq:'default'}; if(!profile.fit.own) profile.fit.own={}; profile.veh=profile.veh||{own:{},eq:null}; if(!profile.veh.own) profile.veh.own={}; $('cmp').style.display='block'; profile.cache=profile.cache||{}; profile.recentT=profile.recentT||[]; if(profile.oreLv>0&&!profile.oreRef){ let sm=0; for(let i=0;i<profile.oreLv&&i<3;i++) sm+=[3000,25000,150000][i]; profile.coins=(profile.coins||0)+sm; profile.oreRef=1; gt('礦脈探測已移除，已退還 '+sm.toLocaleString()+' 金'); } profile.v2=1; refresh();
   if(db&&uid&&!localMode&&!offline){ try{ db.doc('grants/'+uid).onSnapshot(sn=>{ if(!sn.exists) return; const d=sn.data(); if(d.nonce&&d.nonce!==profile.lastGrant&&Number.isFinite(d.amount)){ profile.lastGrant=d.nonce; profile.coins=Math.max(0,(profile.coins||0)+d.amount); refresh(); save(); gt((d.amount>0?'管理員發放 +':'管理員扣除 ')+Math.abs(d.amount)+' 金'); } }); }catch(e){} } $('adm').style.display=(profile.name==='Hermes'&&!offline&&(isAdmin||localMode))?'block':'none';
   if(running) return; running=true;
   if(!window.THREE){ alert('3D 引擎載入失敗'); return; }
@@ -221,13 +173,22 @@ function startGame(){
   mk(new THREE.BoxGeometry(.14,.1,.1),new THREE.MeshBasicMaterial({color:0xfff2b0}),0,2.2,.3);
   const legL=mk(new THREE.BoxGeometry(.28,.8,.3),pt,-.18,.4,0),legR=mk(new THREE.BoxGeometry(.28,.8,.3),pt,.18,.4,0);
   const armL=mk(new THREE.BoxGeometry(.2,.7,.2),sk,-.48,1.2,0),armR=mk(new THREE.BoxGeometry(.2,.7,.2),sk,.48,1.2,0);
+  const cape=mk(new THREE.BoxGeometry(.8,1.1,.08),M(0x5a2a9a),0,1.15,-.28); cape.visible=false;
+  const mkV=parts=>{ const g=new THREE.Group(); parts.forEach(p=>{ const m=new THREE.Mesh(p[0],M(p[1])); m.position.set(p[2],p[3],p[4]); if(p[5]) m.rotation.z=p[5]; g.add(m); }); g.visible=false; P.add(g); return g; };
+  const cyl=new THREE.CylinderGeometry(.32,.32,.1,10),bx=(a,b,c)=>new THREE.BoxGeometry(a,b,c);
+  const vSk=mkV([[bx(.55,.07,1.5),0xff7a1a,0,.1,0],[bx(.12,.12,.12),0x222222,-.2,.04,.5],[bx(.12,.12,.12),0x222222,.2,.04,.5],[bx(.12,.12,.12),0x222222,-.2,.04,-.5],[bx(.12,.12,.12),0x222222,.2,.04,-.5]]);
+  const vBk=mkV([[cyl,0x222222,0,.32,.7,1.5708],[cyl,0x222222,0,.32,-.7,1.5708],[bx(.08,.08,1.4),0x2a7aff,0,.62,0],[bx(.5,.06,.3),0x111111,0,.95,-.4]]);
+  const vMt=mkV([[cyl,0x111111,0,.33,.8,1.5708],[cyl,0x111111,0,.33,-.8,1.5708],[bx(.45,.4,1.4),0xd01a1a,0,.65,0],[bx(.5,.12,.5),0x111111,0,.95,-.2],[bx(.3,.3,.1),0xffd34a,0,.7,.78]]);
   const pkm=new THREE.MeshStandardMaterial({color:curPk().col,flatShading:true}),pk3=new THREE.Group();
   const hd=new THREE.Mesh(new THREE.BoxGeometry(.7,.12,.12),pkm); hd.position.y=-.2; const hn=new THREE.Mesh(new THREE.BoxGeometry(.07,.7,.07),M(0x6b4a2a)); hn.position.y=-.1; pk3.add(hn,hd); pk3.position.set(0,-.4,.15); pk3.rotation.x=-1.2; armR.add(pk3);
   window.setPkColor=(c,g)=>{ pkm.color.set(c); pkm.emissive.set(g||0); pkm.emissiveIntensity=g?.9:0; };
+  const applyLook=()=>{ const f=OUTFITS.find(o=>o.id===(profile.fit&&profile.fit.eq))||OUTFITS[0]; sh.color.set(f.shirt); pt.color.set(f.pants); hat.material.color.set(f.hat); cape.visible=!!f.cape; if(f.cape) cape.material.color.set(f.cape);
+    const v=profile.veh&&profile.veh.eq&&profile.veh.own[profile.veh.eq]?profile.veh.eq:null; vSk.visible=v==='skate'; vBk.visible=v==='bike'; vMt.visible=v==='moto'; };
+  window.applyLook=applyLook; applyLook();
   S.add(P); P.position.set(profile.x||0,0,profile.z||0);
   // ===== 無限分區世界（依深度分成 5 個區域，只載入附近 3x3 區塊）=====
   const SEED=profile.seed,chunks=new Map(),CC=new Map(),key=(a,b)=>a+','+b;
-  let curCx=null,curCz=null,curBi=-1,scanT=0; const siteL=[],hinted=new Set();
+  let curCx=null,curCz=null,curBi=-1,scanT=0,lastCd=1e9; const siteL=[],hinted=new Set();
   const MC=new Map(),mt=(c,r=.9,e=0)=>{ const k=c+'|'+r+'|'+e; let m=MC.get(k); if(!m){ m=new THREE.MeshStandardMaterial(e?{color:c,emissive:c,emissiveIntensity:e,roughness:r,flatShading:true}:{color:c,roughness:r,flatShading:true}); MC.set(k,m); } return m; };
   const G={oct:new THREE.OctahedronGeometry(1),cone:new THREE.ConeGeometry(1,1,5),box:new THREE.BoxGeometry(1,1,1),disc:new THREE.CircleGeometry(1,14),tile:new THREE.PlaneGeometry(CS,CS)};
   const ceil=new THREE.Mesh(new THREE.PlaneGeometry(260,260),new THREE.MeshStandardMaterial({color:0x15121c})); ceil.rotation.x=Math.PI/2; ceil.position.y=7; S.add(ceil);
@@ -287,7 +248,12 @@ function startGame(){
     for(const [k,c] of chunks){ if(!need.has(k)){ S.remove(c.g); c.own.forEach(m=>m.material.dispose()); chunks.delete(k); } }
     for(let a=-1;a<=1;a++) for(let b=-1;b<=1;b++){ const k=key(curCx+a,curCz+b); if(!chunks.has(k)){ const rec=buildChunk(getChunk(curCx+a,curCz+b)); S.add(rec.g); chunks.set(k,rec); } }
     obst.length=0; ores.length=0; acts.length=0; rooms.length=0; siteL.length=0; for(const c of chunks.values()){ obst.push(...c.obs); ores.push(...c.ores); acts.push(...c.acts); rooms.push(...c.rooms); siteL.push(...c.sites); } };
-  const petInfo=()=>{ const e=$('pt'),P2=profile.pets; if(!P2||P2.eq!=='ore'||!P2.own.ore||curBi<0){ e.textContent=''; return; } const tb=ORE_W[curBi]; let best=tb[0][0]; tb.forEach(x=>{ if(OD[x[0]].p>OD[best].p) best=x[0]; }); e.textContent='🧚 本區最高階礦石：'+OD[best].n+'（'+BIOMES[curBi].a.toLocaleString()+' m 起）'; };
+  const petInfo=()=>{ const e=$('pt'),P2=profile.pets; if(!P2||P2.eq!=='ore'||!P2.own.ore||curBi<0){ e.textContent=''; return; }
+    const tb=ORE_W[curBi]; let best=tb[0][0]; tb.forEach(x=>{ if(OD[x[0]].p>OD[best].p) best=x[0]; });
+    const px=P.position.x,pz=P.position.z,R=150; let bd=1e9;
+    for(let a=Math.floor((px-R)/CS);a<=Math.floor((px+R)/CS);a++) for(let b=Math.floor((pz-R)/CS);b<=Math.floor((pz+R)/CS);b++){ const c=getChunk(a,b),dg=profile.dug[a+','+b]||{};
+      c.ores.forEach(o=>{ if(o.idx===best&&!dg[o.i]&&!(o.site&&!siteVis(c,o.site))){ const m=Math.hypot(o.x-px,o.z-pz); if(m<bd) bd=m; } }); }
+    e.textContent='🧚 '+OD[best].n+'・'+(bd<=R?'最近 '+Math.round(bd)+' m':'附近 '+R+' m 內沒有'); };
   window.petInfo=petInfo;
   const onBiome=()=>{ petInfo(); const b=BIOMES[curBi]; S.fog.color.set(b.c); S.background.set(b.c); ceil.material.color.set(b.cc); $('bm').textContent=b.n; if(!profile.biomes[b.k]){ profile.biomes[b.k]=1; if(b.hint) toast(b.hint); save(); } };
   const doAct=a=>{
@@ -358,6 +324,7 @@ function startGame(){
     torch.position.set(P.position.x,3.2,P.position.z);
     const ccx=Math.floor(P.position.x/CS),ccz=Math.floor(P.position.z/CS); if(ccx!==curCx||ccz!==curCz){ curCx=ccx; curCz=ccz; updateChunks(); if(addExp(ccx,ccz)){ gainXp(2); profile.sg=(profile.sg||0)+1; if(profile.sg===6||profile.sg===20) rebuildAll(); if(profile.sg>=30){ profile.sg=15; guide(); } } }
     const dep=Math.round(Math.hypot(P.position.x,P.position.z)); $('dp').textContent=dep.toLocaleString(); const nb=biomeIdx(dep); if(nb!==curBi){ curBi=nb; onBiome(); } ceil.position.x=P.position.x; ceil.position.z=P.position.z;
+    { const cd=Math.round(yaw*57.3); if(cd!==lastCd){ lastCd=cd; $('cmpr').style.transform='rotate('+cd+'deg)'; } }
     { const dk=Math.min(1,dep/6000),tOn=profile.torchOwn&&profile.torchOn; hemi.intensity=.55*(1-.65*dk); torch.intensity=tOn?1.7:1.3-.65*dk; torch.distance=tOn?26:22-11*dk; S.fog.near=tOn?8:8-4*dk; S.fog.far=tOn?36-4*dk:38-20*dk; }
     if(dep>(profile.maxDepth||0)){ profile.maxDepth=dep; checkAch(); }
     cd-=dt; swing=Math.max(0,swing-dt);
@@ -370,7 +337,7 @@ function startGame(){
     for(const q of siteL){ if(profile.sites[q.id]||!canSee(q)) continue; const d=Math.hypot(q.x-P.position.x,q.z-P.position.z);
       if(d<9){ profile.sites[q.id]=1; addPoi(q.x,q.z,'s'); toast(NEAR[q.type]); profile.sg=0; profile.recentT=[q.type].concat(profile.recentT||[]).slice(0,3); gainXp(25); save(); setTimeout(checkAch,1700); }
       else if(d<30&&!hinted.has(q.id)){ hinted.add(q.id); toast(FAR[Math.floor(Math.random()*FAR.length)]); } }
-    scanT-=dt; if(scanT<=0){ scanT=.6; scan(); }
+    scanT-=dt; if(scanT<=0){ scanT=.6; scan(); petInfo(); }
     if(digReq){ digReq=false;
       if(act) doAct(act);
       else if(!tg) toast('附近沒有礦石');
@@ -393,7 +360,7 @@ function startGame(){
 const PK=[['wood','木製十字鎬',0,5,0x8b5a2b],['crush','碎岩十字鎬',150,10,0x999999],['steel','鐵鋼十字鎬',600,22,0xb8c4d0],['gold','黃金十字鎬',2500,45,0xffd34a],['crystal','水晶十字鎬',10000,90,0x6fe0ff],['amethyst','紫晶十字鎬',40000,180,0xb36bff],['obsidian','黑曜十字鎬',150000,350,0x2a2a44],['energy','能量十字鎬',600000,700,0x39ff88],['meteor','星隕十字鎬',2500000,1500,0xff6bd6],['abyssp','深淵十字鎬',8250000,2400,0x2a1f4a,0x7a5cff,5000]].map(a=>({id:a[0],n:a[1],price:a[2],pw:a[3],col:a[4],glow:a[5],need:a[6]}));
 const curPk=()=>PK.find(k=>k.id===(profile&&profile.pickaxe))||PK[0], curPw=()=>curPk().pw;
 const hex=c=>'#'+c.toString(16).padStart(6,'0');
-function refresh(){ if($('cap')) $('cap').textContent=used()+'/'+capOf(); $('coin').textContent=(profile.coins||0).toLocaleString(); $('pk').textContent=curPk().n; if(window.setPkColor) setPkColor(curPk().col,curPk().glow); if($('tc')){ $('tc').style.display=profile.torchOwn?'block':'none'; $('tc').style.opacity=profile.torchOn?1:.45; } if(window.petInfo) petInfo(); }
+function refresh(){ if($('cap')) $('cap').textContent=used()+'/'+capOf(); $('coin').textContent=(profile.coins||0).toLocaleString(); $('pk').textContent=curPk().n; if(window.setPkColor) setPkColor(curPk().col,curPk().glow); if($('tc')){ $('tc').style.display=profile.torchOwn?'block':'none'; $('tc').style.opacity=profile.torchOn?1:.45; } if(window.applyLook) applyLook(); if(window.petInfo) petInfo(); }
 function sell(o,all){ try{ sell2(o,all); }catch(e){ $('bagmsg').className='msg'; $('bagmsg').textContent='出售失敗：'+e.message; } }
 function sell2(o,all){ $('bagmsg').className='msg ok'; const have=(profile.inv||{})[o.id]||0, n=all?have:Math.min(1,have); if(n<=0) return;
   profile.inv[o.id]=have-n; const g=n*o.p; profile.coins=(profile.coins||0)+g; profile.sold=(profile.sold||0)+g; refresh(); save(); renderBag(); checkAch();
@@ -403,7 +370,7 @@ function renderBag0(){ $('bagc').textContent='容量 '+used()+' / '+capOf(); con
   const sw=document.createElement('div'); sw.className='sw'; sw.style.background=hex(o.sc||o.c); const t=two(o.n+' ×'+n,o.p+' 金/件');
   const b1=document.createElement('button'); b1.className='b s'; b1.textContent='賣1'; b1.onclick=()=>sell(o,false);
   const b2=document.createElement('button'); b2.className='b'; b2.textContent='全賣'; b2.onclick=()=>sell(o,true); r.append(sw,t,b1,b2); l.append(r); }); }
-$('bag').onclick=()=>{ $('bagmsg').textContent=''; renderBag(); $('bagp').style.display='flex'; };
+$('bag').onclick=()=>{ $('bagmsg').textContent=''; $('bagp').style.display='flex'; try{ renderBag(); }catch(e){ $('bagl').textContent='背包載入錯誤：'+e.message; } };
 let shopTab='';
 function pickRows(l){ PK.forEach(k=>{ const own=(profile.owned||['wood']).includes(k.id), eq=curPk().id===k.id, r=document.createElement('div'); r.className='row';
     const sw=document.createElement('div'); sw.className='sw'; sw.style.background=hex(k.col); const t=two(k.n,'挖掘力 '+k.pw+'・'+(k.price?k.price.toLocaleString()+' 金':'免費'));
@@ -412,9 +379,9 @@ function pickRows(l){ PK.forEach(k=>{ const own=(profile.owned||['wood']).includ
     r.append(sw,t,b); l.append(r); }); }
 function renderShop(){ $('shopc').textContent='目前金幣：'+(profile.coins||0).toLocaleString(); const l=$('shopl'); l.innerHTML='';
   const bar=document.createElement('div'); bar.style.display='flex'; bar.style.gap='8px';
-  [['pick','十字鎬'],['pet','🐾 寵物'],['up','強化']].forEach(a=>{ const b=document.createElement('button'); b.className='b'+(shopTab===a[0]?'':' s'); b.textContent=a[1]; b.onclick=()=>{ shopTab=shopTab===a[0]?'':a[0]; shopMsg(''); renderShop(); }; bar.append(b); }); l.append(bar);
+  [['pick','十字鎬'],['pet','🐾 寵物'],['fit','服裝'],['up','強化']].forEach(a=>{ const b=document.createElement('button'); b.className='b'+(shopTab===a[0]?'':' s'); b.textContent=a[1]; b.onclick=()=>{ shopTab=shopTab===a[0]?'':a[0]; shopMsg(''); renderShop(); }; bar.append(b); }); l.append(bar);
   if(!shopTab){ const e=document.createElement('div'); e.className='note'; e.textContent='點上方按鈕查看商品'; l.append(e); return; }
-  if(shopTab==='pick') pickRows(l); else if(shopTab==='pet') petShopRows(l); else { upRows(l); torchRow(l); } }
+  if(shopTab==='pick') pickRows(l); else if(shopTab==='pet') petShopRows(l); else if(shopTab==='fit') fitRows(l); else { upRows(l); torchRow(l); } }
 $('shop').onclick=()=>{ $('shopmsg').textContent=''; shopTab=''; renderShop(); $('shopp').style.display='flex'; };
 const CX=[['stone','普通石塊','普通',5,0x8a8a8a],['coal','煤礦','普通',12,0x666677],['copper','銅礦','不常見',30,0xff9a4a],['iron','鐵礦','不常見',55,0xe8e0d8],['gold','黃金礦','稀有',180,0xffd34a],['bcrystal','藍水晶','稀有',350,0x59b8ff],['amethyst','紫水晶','史詩',900,0xb36bff],['ruby','紅寶石礦','史詩',1800,0xff4a6a],['lava','熔岩礦','傳說',5000,0xff7a1a],['meteor','星隕礦','傳說',12000,0x8a7aff],['fossil','遠古化石礦','神話',30000,0xd8c9a0],['void','虛空核心','神話',80000,0xc040ff],['abyss','深淵晶','深淵',150000,0x7a5cff],['prism','稜光晶','深淵',400000,0x40ffe0],['omega','終末晶核','深淵',1000000,0xff3a6e]];
 const RC={'普通':'#bbb','不常見':'#6fdc6f','稀有':'#59b8ff','史詩':'#c07bff','傳說':'#ffb030','神話':'#ff5a7a','深淵':'#7a5cff'};
@@ -426,10 +393,7 @@ function checkAch(){ if(!profile||!profile.ach) return; let n=0; ACH.forEach(a=>
 $('cx').onclick=()=>{ const f=profile.found||{}; $('cxc').textContent='已發現 '+Object.keys(f).length+' / '+CX.length; const l=$('cxl'); l.innerHTML='';
   CX.forEach(c=>{ const k=!!f[c[0]],r=document.createElement('div'); r.className='row'; const sw=document.createElement('div'); sw.className='sw'; sw.style.background=k?hex(c[4]):'#15121c';
     const t=two(k?c[1]:'？？？',k?c[2]+'・'+(INTRO[c[0]]||''):'未發現'); if(k) t.firstChild.parentNode.querySelector('small').style.color=RC[c[2]]; r.append(sw,t); l.append(r); }); petCodex(l); $('cxp').style.display='flex'; };
-$('tr').onclick=()=>{ const p=profile,l=$('trl'); l.innerHTML=''; const row=(a,b)=>{ const r=document.createElement('div'); r.className='row'; const x=document.createElement('span'); x.textContent=a; const y=document.createElement('span'); y.textContent=b; r.append(x,y); l.append(r); };
-  row('累積挖掘次數',(p.hits||0)); row('累積取得礦物',(p.mined||0)); row('累積出售金額',(p.sold||0).toLocaleString()+' 金'); row('已發現礦物',Object.keys(p.found||{}).length+' / '+CX.length); row('最深深度',(p.maxDepth||0)+' m'); row('古代遺物',Object.keys(p.relics||{}).length+' / '+RL.length); row('已解鎖區域',(1+Object.keys(p.zones||{}).length)+' / 4');
-  const h=document.createElement('div'); h.className='note'; h.style.margin='10px 0 2px'; h.textContent='成就'; l.append(h); ACH.forEach(a=>row((p.ach&&p.ach[a[0]]?'✅ ':'⬜ ')+a[1],'')); const eb=document.createElement('button'); eb.className='b s'; eb.textContent='匯出存檔碼'; eb.onclick=exportSave; if(profile.name==='Hermes') l.append(eb); $('trp').style.display='flex'; };
-['bagp','admp','shopp','cxp','trp','zonp','mpp'].forEach(i=>{ const sc=$(i); const x=document.createElement('button'); x.className='x'; x.textContent='✕'; x.onclick=()=>sc.style.display='none'; sc.firstElementChild.prepend(x); sc.addEventListener('click',e=>{ if(e.target===sc) sc.style.display='none'; }); });
+['bagp','admp','shopp','cxp','zonp','mpp','vhp'].forEach(i=>{ const sc=$(i); const x=document.createElement('button'); x.className='x'; x.textContent='✕'; x.onclick=()=>sc.style.display='none'; sc.firstElementChild.prepend(x); sc.addEventListener('click',e=>{ if(e.target===sc) sc.style.display='none'; }); });
 function askPw(){ return new Promise(res=>{ const p=$('pwp'); $('pwi').value=''; $('pwm').textContent=''; p.style.display='flex'; const done=v=>{ p.style.display='none'; res(v); };
   $('pwok').onclick=()=>{ if($('pwi').value==='2468') done(true); else $('pwm').textContent='密碼錯誤'; }; $('pwno').onclick=()=>done(false); }); }
 function renderZones(){ const l=$('zonl'); l.innerHTML='';
@@ -460,6 +424,9 @@ $('mp').onclick=()=>{ drawMap(); const l=$('mpi'); l.innerHTML=''; const p=profi
   ks(cnt).forEach(t=>row('　'+SITE_N[t],'×'+cnt[t]));
   row('秘密房間',ks(p.rooms||{}).length); row('遺跡機關',ks(p.puzzles||{}).length); row('已開啟寶箱',ks(p.chests||{}).length);
   hd('收藏'); row('礦物',ks(p.found||{}).length+' / '+CX.length); row('遺物',ks(p.relics||{}).length+' / '+RL.length); row('寵物',PETS.filter(x=>p.pets&&p.pets.own[x.id]).length+' / '+PETS.length); row('成就',ks(p.ach||{}).length+' / '+ACH.length);
+  hd('統計'); row('累積挖掘次數',(p.hits||0).toLocaleString()); row('累積取得礦物',(p.mined||0).toLocaleString()); row('累積出售金額',(p.sold||0).toLocaleString()+' 金');
+  hd('成就列表'); ACH.forEach(a=>row((p.ach&&p.ach[a[0]]?'✅ ':'⬜ ')+a[1],''));
+  if(p.name==='Hermes'){ const eb=document.createElement('button'); eb.className='b s'; eb.textContent='匯出存檔碼'; eb.onclick=exportSave; l.append(eb); }
   $('mpp').style.display='flex'; };
 $('zn').onclick=()=>{ $('zonm').textContent=''; renderZones(); $('zonp').style.display='flex'; };
 addEventListener('pagehide',()=>save()); 
@@ -542,7 +509,7 @@ const pzDone=id=>{ const q=profile.puzzles||{}; if(q[id]) return true; const m=/
 const SITE_N={mine:'廢棄礦坑',cave:'坍塌洞穴',grotto:'螢光晶室',lavabridge:'熔岩橋道',forge:'黑曜熔爐',hall:'石柱長廊',puzzle:'符文機關',forest:'虛空晶林',altar:'遠古祭壇',vault:'深層寶庫',voidroom:'虛空密室'};
 const INTRO={stone:'隨處可見的岩塊',coal:'燃燒緩慢的黑色礦',copper:'帶綠鏽的紅色金屬',iron:'堅硬可靠的金屬',gold:'閃耀光澤的貴金屬',bcrystal:'冰涼透亮的晶體',amethyst:'帶著紫光的晶簇',ruby:'深紅色的寶石礦',lava:'仍在發熱的熔岩礦',meteor:'來自天外的礦石',fossil:'沉睡千年的化石',void:'吸收光線的黑色核心',abyss:'深處傳來低語的晶體',prism:'折射出七彩的奇晶',omega:'據說只存在於最深處的核心'};
 const CAPS=[50,100,200,400,800],SPDS=[5,6,7,8,9];
-const capOf=()=>CAPS[(profile&&profile.bagLv)||0], spdOf=()=>SPDS[(profile&&profile.spdLv)||0]+(profile&&profile.pets&&profile.pets.eq==='void'&&profile.pets.own.void?1:0), used=()=>Object.values((profile&&profile.inv)||{}).reduce((a,b)=>a+b,0);
+const capOf=()=>CAPS[(profile&&profile.bagLv)||0], spdOf=()=>SPDS[(profile&&profile.spdLv)||0]+(profile&&profile.pets&&profile.pets.eq==='void'&&profile.pets.own.void?1:0)+vehSp(), used=()=>Object.values((profile&&profile.inv)||{}).reduce((a,b)=>a+b,0);
 function zcOf(x){ return x>375?450:x>225?300:x>75?150:0; }
 const UPG={bagLv:{n:'背包容量',vals:CAPS,prices:[300,1500,8000,40000],ic:'🎒'},spdLv:{n:'移動速度',vals:SPDS,prices:[500,3000,20000,80000],ic:'👟',needLv:3,need:5000},chestLv:{n:'寶藏探測',vals:[0,40,80,140],prices:[4000,30000,200000],ic:'🧭'}};
 const PETS=[{id:'ore',n:'礦石精靈',r:'史詩',price:12000,intro:'低語著此地最珍貴的礦石'},{id:'crystal',n:'礦晶獸',r:'傳說',price:900000,intro:'挖礦時偶爾多帶回一份礦石'},{id:'void',n:'虛空精靈',r:'傳說',price:0,intro:'來自深淵的輕盈氣息'}];
@@ -677,6 +644,29 @@ async function bootSB(){
 $('rn').oninput=()=>{ $('imp').style.display=((localMode||!!SB_URL)&&$('rn').value.trim().toLowerCase()==='hermes')?'block':'none'; };
 document.addEventListener('gesturestart',e=>e.preventDefault());
 let lastTap=0; document.addEventListener('touchend',e=>{ const t=e.target; if(['cv','joy','knob','dig','tip'].includes(t.id)){ const n=Date.now(); if(n-lastTap<350) e.preventDefault(); lastTap=n; } },{passive:false});
+const OUTFITS=[{id:'default',n:'預設工作服',price:0,tag:'普通',shirt:0x3b6fd6,pants:0x3a3a4a,hat:0xf5b942},
+{id:'rag',n:'泥巴麻布裝',price:4000,tag:'超醜',shirt:0x6b5a3a,pants:0x4a3d28,hat:0x7a6a4a},
+{id:'neon',n:'螢光工地裝',price:28000,tag:'很醜',shirt:0xd7ff00,pants:0xff6600,hat:0xff00cc},
+{id:'steel',n:'鋼鐵礦工服',price:260000,tag:'不錯',shirt:0x7a8aa0,pants:0x2a2f3a,hat:0xc0c8d0},
+{id:'knight',n:'黑曜騎士裝',price:1800000,tag:'很帥',shirt:0x1a1a2e,pants:0x0d0d18,hat:0x7a5cff},
+{id:'void',n:'虛空星披風',price:8888888,tag:'超帥',shirt:0x0b0420,pants:0x120a2a,hat:0xff3a6e,cape:0x5a2a9a}];
+const VEH=[{id:'skate',n:'滑板',price:800000,sp:1},{id:'bike',n:'腳踏車',price:3000000,sp:1.8},{id:'moto',n:'摩托車',price:10000000,sp:2.5}];
+const vehSp=()=>{ const v=profile&&profile.veh,d=v&&v.eq&&v.own&&v.own[v.eq]?VEH.find(x=>x.id===v.eq):null; return d?d.sp:0; };
+function fitRows(l){ const F=profile.fit; OUTFITS.forEach(o=>{ const own=o.price===0||F.own[o.id],eq=(F.eq||'default')===o.id,r=document.createElement('div'); r.className='row';
+  const sw=document.createElement('div'); sw.className='sw'; sw.style.background=hex(o.shirt); const b=document.createElement('button'); b.className='b'+(eq?' s':''); b.disabled=eq; b.textContent=eq?'穿著中':own?'穿上':'購買'; b.onclick=()=>fitAct(o.id);
+  r.append(sw,two(o.n,o.tag+'・'+(o.price?o.price.toLocaleString()+' 金':'免費')),b); l.append(r); }); }
+function fitAct(id){ const o=OUTFITS.find(x=>x.id===id),F=profile.fit; if(!o) return; const own=o.price===0||F.own[id];
+  if(!own){ if((profile.coins||0)<o.price) return shopMsg(lack(o.price)); profile.coins-=o.price; F.own[id]=1; shopMsg('已購買 '+o.n,1); } else { F.eq=id; shopMsg('已穿上 '+o.n,1); }
+  refresh(); save(); renderShop(); }
+function vehMsg(t,ok){ const m=$('vhm'); m.className='msg'+(ok?' ok':''); m.textContent=t; }
+function vehAct(id){ const d=VEH.find(x=>x.id===id),V=profile.veh; if(!d) return;
+  if(!V.own[id]){ if((profile.coins||0)<d.price) return vehMsg(lack(d.price)); profile.coins-=d.price; V.own[id]=1; vehMsg('已購買 '+d.n+'，按「裝備」使用',1); }
+  else{ V.eq=V.eq===id?null:id; vehMsg(V.eq?'已裝備 '+d.n:'已卸下 '+d.n,1); }
+  refresh(); save(); renderVeh(); }
+function renderVeh(){ $('vhc').textContent='金幣 '+(profile.coins||0).toLocaleString()+'・一次只能裝備一種'; const l=$('vhl'); l.innerHTML=''; const V=profile.veh;
+  VEH.forEach(d=>{ const own=V.own[d.id],eq=V.eq===d.id,r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'+(eq?' s':''); b.textContent=eq?'卸下':own?'裝備':'購買'; b.onclick=()=>vehAct(d.id);
+    r.append(two(d.n+(eq?'（裝備中）':''),'速度 +'+d.sp+'・'+(own?'已擁有':d.price.toLocaleString()+' 金')),b); l.append(r); }); }
+$('vh').onclick=()=>{ $('vhm').textContent=''; renderVeh(); $('vhp').style.display='flex'; };
 $('tc').onclick=toggleTorch;
 boot2();
 </script></body></html>
