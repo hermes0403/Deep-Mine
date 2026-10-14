@@ -71,6 +71,10 @@ textarea,input{font-size:16px !important}
 .cxc i{display:block;width:26px;height:26px;border-radius:50%;margin:0 auto 4px}
 .cxc b{display:block;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cxc small{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bsm,#bbg{right:126px;width:52px;height:52px;border-radius:50%;font-size:15px;display:none}
+#bsm{bottom:calc(42px + env(safe-area-inset-bottom,0px));background:#8a4a1acc}
+#bbg{bottom:calc(102px + env(safe-area-inset-bottom,0px));background:#b02a2acc}
+@media (orientation:landscape){#bsm{right:110px;bottom:calc(14px + env(safe-area-inset-bottom,0px))}#bbg{right:110px;bottom:calc(72px + env(safe-area-inset-bottom,0px))}}
 </style></head><body>
 <canvas id="cv"></canvas>
 <div id="hud"><div>👤 <span id="pn">-</span>　💰 <span id="coin">0</span><br>⛏ <span id="pk">木製十字鎬</span>　🎒 <span id="cap">0/50</span></div><div>⬇ <span id="dp">0</span>m　<button id="out" class="b s ui" style="width:auto;margin:0;padding:4px 10px;font-size:13px">登出</button><br><span id="bm"></span></div></div>
@@ -78,7 +82,7 @@ textarea,input{font-size:16px !important}
 <div id="tip">搖桿移動・拖曳轉視角</div>
 
 <div id="cmp"><div id="cmpr"><b>N</b><b>E</b><b>S</b><b>W</b></div><u></u></div><div id="hpb"><div id="hpf"></div><span id="hpt"></span></div><div id="tg"></div><div id="scn"></div><div id="pt"></div><div id="toast"></div>
-<button class="ui" id="dig">⛏ 挖掘</button><div id="rail"><button class="ui" id="bag">🎒</button><button class="ui" id="shop">🛒</button><button class="ui" id="lo">🎰</button><button class="ui" id="zn">🧭</button><button class="ui" id="cx">📖</button><button class="ui" id="mp">🗺</button><button class="ui" id="adm">🛠</button></div>
+<button class="ui" id="dig">⛏ 挖掘</button><button class="ui" id="bsm">💣0</button><button class="ui" id="bbg">💥0</button><div id="rail"><button class="ui" id="bag">🎒</button><button class="ui" id="shop">🛒</button><button class="ui" id="lo">🎰</button><button class="ui" id="zn">🧭</button><button class="ui" id="cx">📖</button><button class="ui" id="mp">🗺</button><button class="ui" id="adm">🛠</button></div>
 <div class="screen" id="bagp" style="display:none"><div class="card"><h1 style="font-size:22px">背包</h1><div class="note" id="bagc"></div><div id="bagl"></div><div id="bagmsg" class="msg ok"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="shopp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">商店</h1><div class="note" id="shopc"></div><div id="shopl"></div><div id="shopmsg" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="cxp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">礦物圖鑑</h1><div class="note" id="cxc"></div><div id="cxl"></div><div class="note" id="cxd" style="white-space:normal;min-height:34px;margin-top:6px">點一格可以查看介紹</div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
@@ -161,7 +165,7 @@ function startGame(){
   $('title').style.display='none';
   ['hud','joy','tip'].forEach(i=>$(i).style.display=(i==='hud'?'flex':'block'));
   $('pn').textContent=profile.name+(offline?'（離線）':'');
-  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('mp').style.display=$('cx').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; profile.dug=profile.dug||{}; profile.exp=profile.exp||{}; profile.poi=profile.poi||[]; profile.rooms=profile.rooms||{}; profile.puzzles=profile.puzzles||{}; profile.biomes=profile.biomes||{}; if(!profile.seed) profile.seed=(Math.random()*4294967296)>>>0; profile.sites=profile.sites||{}; if(profile.xp==null) profile.xp=Math.min(400,Math.floor((profile.maxDepth||0)/5)); profile.pity=profile.pity||0; profile.sg=profile.sg||0; profile.pets=profile.pets||{own:{},eq:null}; if(!profile.pets.own) profile.pets.own={}; if(!profile.pets.lv) profile.pets.lv={}; profile.fit=profile.fit||{own:{},eq:'default'}; if(!profile.fit.own) profile.fit.own={}; profile.veh=profile.veh||{own:{},eq:null}; if(!profile.veh.own) profile.veh.own={}; $('cmp').style.display='block'; setTimeout(()=>{ if(typeof fbStart==='function') fbStart(); },800); profile.cache=profile.cache||{}; profile.hpLv=profile.hpLv||0; profile.fish=profile.fish||{}; $('lo').style.display='block'; profile.mcoin=profile.mcoin||0; profile.kills=profile.kills||0; $('hpb').style.display='block'; profile.recentT=profile.recentT||[]; if(profile.oreLv>0&&!profile.oreRef){ let sm=0; for(let i=0;i<profile.oreLv&&i<3;i++) sm+=[3000,25000,150000][i]; profile.coins=(profile.coins||0)+sm; profile.oreRef=1; gt('礦脈探測已移除，已退還 '+sm.toLocaleString()+' 金'); } profile.v2=1; refresh();
+  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('mp').style.display=$('cx').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; profile.dug=profile.dug||{}; profile.exp=profile.exp||{}; profile.poi=profile.poi||[]; profile.rooms=profile.rooms||{}; profile.puzzles=profile.puzzles||{}; profile.biomes=profile.biomes||{}; if(!profile.seed) profile.seed=(Math.random()*4294967296)>>>0; profile.sites=profile.sites||{}; if(profile.xp==null) profile.xp=Math.min(400,Math.floor((profile.maxDepth||0)/5)); profile.pity=profile.pity||0; profile.sg=profile.sg||0; profile.pets=profile.pets||{own:{},eq:null}; if(!profile.pets.own) profile.pets.own={}; if(!profile.pets.lv) profile.pets.lv={}; profile.fit=profile.fit||{own:{},eq:'default'}; if(!profile.fit.own) profile.fit.own={}; profile.veh=profile.veh||{own:{},eq:null}; if(!profile.veh.own) profile.veh.own={}; $('cmp').style.display='block'; setTimeout(()=>{ if(typeof fbStart==='function') fbStart(); },800); profile.cache=profile.cache||{}; profile.hpLv=profile.hpLv||0; profile.fish=profile.fish||{}; $('lo').style.display='block'; profile.bombs=profile.bombs||{small:0,big:0}; profile.blasted=profile.blasted||{}; $('bsm').style.display=$('bbg').style.display='block'; profile.mcoin=profile.mcoin||0; profile.kills=profile.kills||0; $('hpb').style.display='block'; profile.recentT=profile.recentT||[]; if(profile.oreLv>0&&!profile.oreRef){ let sm=0; for(let i=0;i<profile.oreLv&&i<3;i++) sm+=[3000,25000,150000][i]; profile.coins=(profile.coins||0)+sm; profile.oreRef=1; gt('礦脈探測已移除，已退還 '+sm.toLocaleString()+' 金'); } profile.v2=1; refresh();
   if(db&&uid&&!localMode&&!offline){ try{ db.doc('grants/'+uid).onSnapshot(sn=>{ if(!sn.exists) return; const d=sn.data(); if(d.nonce&&d.nonce!==profile.lastGrant&&Number.isFinite(d.amount)){ profile.lastGrant=d.nonce; profile.coins=Math.max(0,(profile.coins||0)+d.amount); refresh(); save(); gt((d.amount>0?'管理員發放 +':'管理員扣除 ')+Math.abs(d.amount)+' 金'); } }); }catch(e){} } $('adm').style.display=(profile.name==='Hermes'&&!offline&&(isAdmin||localMode))?'block':'none';
   if(running) return; running=true;
   if(!window.THREE){ alert('3D 引擎載入失敗'); return; }
@@ -173,7 +177,7 @@ function startGame(){
   const torch=new THREE.PointLight(0xffc070,1.4,22,1.6); torch.castShadow=false; torch.shadow.mapSize.set(512,512); S.add(torch);
   const rs=(()=>{let s=7;return()=>(s=(s*16807)%2147483647)/2147483647})();
   const M=(c,r=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:r,flatShading:true});
-  const obst=[],ores=[],acts=[],rooms=[],zombies=[],rg=new THREE.DodecahedronGeometry(1,0);
+  const obst=[],ores=[],acts=[],rooms=[],zombies=[],rocksAct=[],bombs=[],blasts=[],rg=new THREE.DodecahedronGeometry(1,0);
   // player
   const P=new THREE.Group(),sk=M(0xf2c9a0),sh=M(0x3b6fd6),pt=M(0x3a3a4a);
   const mk=(g,m,x,y,z)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;P.add(o);return o};
@@ -250,11 +254,12 @@ function startGame(){
     if(d.id==='singularity'){ const rn=new THREE.Mesh(G.tor,mt(0xff2aff,.3,1.4)); rn.position.y=.9; rn.rotation.x=1.5708; og.add(rn); ob.ringFl={m:rn,y0:.9,ph:0,spin:3}; ob.rec.fl.push(ob.ringFl); } };
   const rerollOre=ob=>{ if(ob.perm) return; ob.d=OD[randOreIdx(ob.bi,Math.hypot(ob.x,ob.z))]; paintOre(ob); };
   function buildChunk(ch){
-    const b=BIOMES[ch.bi],g=new THREE.Group(),rec={k:key(ch.cx,ch.cz),cx:ch.cx,cz:ch.cz,g,obs:[],ores:[],acts:[],rooms:ch.rooms,sites:ch.sites,own:[],fl:[],zs:[]};
+    const b=BIOMES[ch.bi],g=new THREE.Group(),rec={k:key(ch.cx,ch.cz),cx:ch.cx,cz:ch.cz,g,obs:[],ores:[],acts:[],rooms:ch.rooms,sites:ch.sites,own:[],fl:[],zs:[],rk:[]};
     const put=(geo,mat,x,y,z,sx,sy,sz)=>{ const m=new THREE.Mesh(geo,mat); m.position.set(x,y,z); m.scale.set(sx,sy,sz); g.add(m); return m; };
     const sv=id=>{ const q=ch.sites.find(x=>x.id===id); return !q||canSee(q); };
     const gm=new THREE.Mesh(G.tile,ch.bi===5?mt(b.g,.35,.1):mt(b.g)); gm.rotation.x=-Math.PI/2; gm.position.set(ch.cx*CS+CS/2,0,ch.cz*CS+CS/2); g.add(gm);
-    ch.rocks.forEach(o=>{ if(o.site&&!sv(o.site)) return; if(o.pillar) put(G.box,mt(ch.bi===5?0x1a1a24:0x8a7a5a,ch.bi===5?.25:.9,ch.bi===5?.14:0),o.x,o.h/2,o.z,.9,o.h,.9); else { const s=o.r/.95; put(rg,ch.bi===5?mt(b.rk[o.col],.25,.18):mt(b.rk[o.col]),o.x,o.h*.8,o.z,s,o.h,s); } rec.obs.push({x:o.x,z:o.z,r:o.r}); });
+    const bl=(profile.blasted&&profile.blasted[rec.k])||{};
+    ch.rocks.forEach((o,ri)=>{ if(o.site&&!sv(o.site)) return; if(bl[ri]) return; let m; if(o.pillar) m=put(G.box,mt(ch.bi===5?0x1a1a24:0x8a7a5a,ch.bi===5?.25:.9,ch.bi===5?.14:0),o.x,o.h/2,o.z,.9,o.h,.9); else { const s=o.r/.95; m=put(rg,ch.bi===5?mt(b.rk[o.col],.25,.18):mt(b.rk[o.col]),o.x,o.h*.8,o.z,s,o.h,s); } const c={x:o.x,z:o.z,r:o.r}; rec.obs.push(c); rec.rk.push({i:ri,k:rec.k,m,c,g,x:o.x,z:o.z}); });
     ch.pools.forEach(p=>{ if(p.site&&!sv(p.site)) return; const m=put(G.disc,p.energy?eMat:mt(p.col,.4,.6),p.x,.03,p.z,p.r,p.r,1); m.rotation.x=-Math.PI/2; if(p.solid) rec.obs.push({x:p.x,z:p.z,r:p.r*.9}); });
     ch.decor.forEach(d=>{ if(d.site&&!sv(d.site)) return; if(d.kind==='post'){ put(G.box,mt(0x6b4a2a),d.x,1.2,d.z,.3,2.4,.3); return; }
       if(d.kind==='cart'){ put(G.box,mt(0x6b4a2a),d.x,.4,d.z,1.2,.7,.8); return; }
@@ -290,7 +295,7 @@ function startGame(){
   const updateChunks=()=>{ const need=new Set(); for(let a=-1;a<=1;a++) for(let b=-1;b<=1;b++) need.add(key(curCx+a,curCz+b));
     for(const [k,c] of chunks){ if(!need.has(k)){ S.remove(c.g); c.own.forEach(m=>m.material.dispose()); chunks.delete(k); } }
     for(let a=-1;a<=1;a++) for(let b=-1;b<=1;b++){ const k=key(curCx+a,curCz+b); if(!chunks.has(k)){ const rec=buildChunk(getChunk(curCx+a,curCz+b)); S.add(rec.g); chunks.set(k,rec); } }
-    obst.length=0; ores.length=0; acts.length=0; rooms.length=0; siteL.length=0; zombies.length=0; for(const c of chunks.values()){ obst.push(...c.obs); ores.push(...c.ores); acts.push(...c.acts); rooms.push(...c.rooms); siteL.push(...c.sites); zombies.push(...c.zs); } };
+    obst.length=0; ores.length=0; acts.length=0; rooms.length=0; siteL.length=0; zombies.length=0; rocksAct.length=0; for(const c of chunks.values()){ rocksAct.push(...c.rk); obst.push(...c.obs); ores.push(...c.ores); acts.push(...c.acts); rooms.push(...c.rooms); siteL.push(...c.sites); zombies.push(...c.zs); } };
   const petInfo=()=>{ const e=$('pt'),P2=profile.pets; if(!P2||P2.eq!=='ore'||!P2.own.ore||curBi<0){ e.textContent=''; return; }
     const tb=ORE_W[curBi]; let best=tb[0][0]; tb.forEach(x=>{ if(OD[x[0]].p>OD[best].p) best=x[0]; });
     const px=P.position.x,pz=P.position.z,R=150; let bd=1e9;
@@ -322,15 +327,36 @@ function startGame(){
   const makeZombie=zd=>{ const T=ZT[zd.tier],g=new THREE.Group(),add=(geo,mat,x,y,z,sx,sy,sz)=>{ const m=new THREE.Mesh(geo,mat); m.position.set(x,y,z); m.scale.set(sx,sy,sz); g.add(m); return m; };
     add(G.box,mt(T.col,.8,T.em),0,.75,0,.55,.85,.32); add(G.box,mt(0x9ab88a,.8,T.em),0,1.4,0,.42,.42,.42); add(G.box,mt(T.col,.8,T.em),0,1.05,.38,.8,.14,.6); const bar=add(G.box,hpBarMat,0,2.05,0,1,.08,.08);
     g.scale.setScalar(T.sc); g.position.set(zd.x,0,zd.z); return {g,bar,x:zd.x,z:zd.z,hx:zd.x,hz:zd.z,tier:zd.tier,hp:T.hp,max:T.hp,cd:1,dead:false,t:0,sleep:0,ph:zd.x*3.1+zd.z}; };
-  const die=()=>{ hp=hpMaxOf(); invul=6; toast('你倒下了…已在原地重新站起來'); zombies.forEach(z=>{ if(Math.hypot(z.x-P.position.x,z.z-P.position.z)<30) z.sleep=6; }); hpHud(); };
+  const die=()=>{ hp=hpMaxOf(); invul=6; const lost=Math.min(5,Math.round((profile.mcoin||0)*10)/10); profile.mcoin=Math.max(0,Math.round(((profile.mcoin||0)-5)*10)/10); toast('你倒下了…已在原地重新站起來'+(lost>0?'（殭屍幣 -'+lost+'）':'')); zombies.forEach(z=>{ if(Math.hypot(z.x-P.position.x,z.z-P.position.z)<30) z.sleep=6; }); hpHud(); save(); };
   const updateZombies=(dt,now)=>{ const px=P.position.x,pz=P.position.z;
     for(const z of zombies){ if(z.dead){ z.t-=dt; if(z.t<=0){ z.dead=false; z.hp=z.max; z.x=z.hx; z.z=z.hz; z.cd=1; } z.g.visible=false; continue; }
       const dx=px-z.x,dz=pz-z.z,d=Math.hypot(dx,dz); z.g.visible=d<70; if(d>=70) continue; const T=ZT[z.tier]; z.cd-=dt; if(z.sleep>0) z.sleep-=dt;
       if(z.sleep<=0&&d<16){ if(d>1.4){ const sp=T.spd*dt; z.x+=dx/d*sp; z.z+=dz/d*sp; for(const o of obst){ if(o.off) continue; const ox=z.x-o.x,oz=z.z-o.z,od=Math.hypot(ox,oz),mn=o.r+.45; if(od<mn&&od>0){ z.x=o.x+ox/od*mn; z.z=o.z+oz/od*mn; } } z.g.rotation.y=Math.atan2(dx,dz); }
         else if(z.cd<=0){ z.cd=1.1; if(invul<=0){ hp-=T.dmg; lastHit=now/1000; burst(px,1,pz,0xff3030,5); if(hp<=0) die(); } } }
       z.g.position.set(z.x,Math.abs(Math.sin(now/260+z.ph))*.06,z.z); z.bar.scale.x=Math.max(.02,z.hp/z.max); } };
-  const hitZombie=z=>{ if(cd>0) return; cd=.45; swing=.35; face=Math.atan2(z.x-P.position.x,z.z-P.position.z); z.hp-=atkPw(); z.sleep=0; burst(z.x,1,z.z,0x66ff66,6);
-    if(z.hp<=0){ z.dead=true; z.t=90; z.g.visible=false; const T=ZT[z.tier]; profile.mcoin=Math.round(((profile.mcoin||0)+T.coin)*10)/10; profile.kills=(profile.kills||0)+1; gainXp(2); hpHud(); toast('擊倒殭屍！殭屍幣 +'+T.coin); save(); } };
+  const killZombie=(z,quiet)=>{ z.dead=true; z.t=90; z.g.visible=false; const T=ZT[z.tier]; profile.mcoin=Math.round(((profile.mcoin||0)+T.coin)*10)/10; profile.kills=(profile.kills||0)+1; gainXp(2); hpHud(); if(!quiet){ toast('擊倒殭屍！殭屍幣 +'+T.coin); save(); } return T.coin; };
+  const hitZombie=z=>{ if(cd>0) return; cd=.45; swing=.35; face=Math.atan2(z.x-P.position.x,z.z-P.position.z); z.hp-=atkPw(); z.sleep=0; burst(z.x,1,z.z,0x66ff66,6); if(z.hp<=0) killZombie(z); };
+  const breakOre=(tg,bomb)=>{ if(bomb&&tg.d.id!=='wall'&&used()>=capOf()) return {ok:false}; tg.hp=0; tg.g.visible=false; tg.c.off=true; tg.t=tg.perm?1e9:30; (profile.dug[tg.ck]=profile.dug[tg.ck]||{})[tg.i]=tg.perm?-1:Date.now(); burst(tg.x,.8,tg.z,tg.d.sc||tg.d.c,14);
+    if(tg.d.id==='wall'){ if(!bomb) toast('岩壁崩塌了！'); save(); return {ok:true,wall:true}; }
+    const dm=new THREE.Mesh(pg,new THREE.MeshBasicMaterial({color:tg.d.sc||tg.d.c})); dm.scale.setScalar(2); dm.position.set(tg.x,.8,tg.z); S.add(dm); drops.push({m:dm,t:0});
+    profile.found=profile.found||{}; const first=!profile.found[tg.d.id]; profile.found[tg.d.id]=1; profile.inv[tg.d.id]=(profile.inv[tg.d.id]||0)+1; profile.mined=(profile.mined||0)+1; gainXp(1);
+    if(!bomb&&profile.pets&&profile.pets.eq==='crystal'&&profile.pets.own.crystal&&Math.random()<(.05+.004*petLv('crystal'))&&used()<capOf()){ profile.inv[tg.d.id]=(profile.inv[tg.d.id]||0)+1; setTimeout(()=>toast('礦晶獸複製了一份'+tg.d.n+'！'),800); }
+    refresh(); if(!bomb) toast((first?'NEW！ ':'')+'獲得 '+tg.d.n); save(); setTimeout(checkAch,1700); if(!bomb) lucky(tg); return {ok:true,first}; };
+  const bombMat=new THREE.MeshStandardMaterial({color:0x220000,emissive:0xff2200,emissiveIntensity:1});
+  window.placeBomb=type=>{ const B=BOMBS.find(x=>x.id===type); if(!B||bombN(type)<=0) return toast('沒有'+(B?B.n:'炸藥')+'了，可到商店「道具」購買'); if(bombs.length>=8) return toast('同時最多放 8 顆炸藥');
+    profile.bombs[type]=bombN(type)-1; const m=new THREE.Mesh(G.box,bombMat); const sc=type==='big'?.55:.38; m.scale.set(sc,sc,sc); m.position.set(P.position.x,sc/2,P.position.z); S.add(m); bombs.push({x:P.position.x,z:P.position.z,t:B.fuse,type,m,sc}); refresh(); save(); toast('炸藥已放下，快離開！'); };
+  const explode=(b,now)=>{ const B=BOMBS.find(x=>x.id===b.type),R=B.r; S.remove(b.m); burst(b.x,.8,b.z,0xffa020,18); burst(b.x,.8,b.z,0xffe080,14);
+    const ring=new THREE.Mesh(G.disc,new THREE.MeshBasicMaterial({color:0xff9a30,transparent:true,opacity:.7})); ring.rotation.x=-Math.PI/2; ring.position.set(b.x,.1,b.z); ring.scale.set(.2,.2,1); S.add(ring); blasts.push({m:ring,t:0,R});
+    let got=0,lost=0,rocks=0,kills=0,coin=0,news=0;
+    for(const o of ores){ if(o.hp<=0||o.d.reqPick||Math.hypot(o.x-b.x,o.z-b.z)>R) continue; o.hp-=B.dmg; if(o.hp<=0){ const r=breakOre(o,true); if(r.ok){ if(!r.wall) got++; if(r.first) news++; } else{ o.hp=1; lost++; } } }
+    for(const r of rocksAct){ if(r.c.off||Math.hypot(r.x-b.x,r.z-b.z)>R) continue; r.c.off=true; if(r.m.parent) r.m.parent.remove(r.m); (profile.blasted[r.k]=profile.blasted[r.k]||{})[r.i]=1; rocks++; }
+    for(const z of zombies){ if(z.dead||Math.hypot(z.x-b.x,z.z-b.z)>R) continue; z.hp-=B.dmg; z.sleep=0; if(z.hp<=0){ coin+=killZombie(z,true); kills++; } }
+    let hurt=false; if(Math.hypot(P.position.x-b.x,P.position.z-b.z)<=R&&invul<=0){ hp-=BOMB_HURT; lastHit=now/1000; hurt=true; if(hp<=0) die(); hpHud(); }
+    const parts=[]; if(rocks) parts.push('炸掉 '+rocks+' 塊石頭'); if(got) parts.push('獲得 '+got+' 個礦石'); if(kills) parts.push('炸倒 '+kills+' 隻殭屍（殭屍幣 +'+(Math.round(coin*10)/10)+'）'); if(lost) parts.push('背包已滿，'+lost+' 個礦石沒有炸碎'); if(hurt) parts.push('你被炸到了 -'+BOMB_HURT);
+    toast('爆炸！'+(parts.length?parts.join('・'):'什麼都沒炸到')); save(); };
+  const updateBombs=(dt,now)=>{ bombMat.emissiveIntensity=.6+.4*Math.sin(now/70); for(let i=bombs.length-1;i>=0;i--){ const b=bombs[i]; b.t-=dt; const k=b.sc*(1+.18*Math.sin(now/55)); b.m.scale.set(k,k,k); if(b.t<=0){ bombs.splice(i,1); explode(b,now); } }
+    for(let i=blasts.length-1;i>=0;i--){ const o=blasts[i]; o.t+=dt; const k=Math.min(1,o.t/.35); o.m.scale.set(o.R*k,o.R*k,1); o.m.material.opacity=.7*(1-k); if(o.t>.4){ S.remove(o.m); o.m.material.dispose(); blasts.splice(i,1); } } };
+  window.worldInfo=()=>({ores:ores.map(o=>({x:o.x,z:o.z,hp:o.hp,id:o.d.id,req:o.d.reqPick||null})),rocks:rocksAct.map(r=>({x:r.x,z:r.z,off:r.c.off})),bombs:bombs.length});
   window.hpAdd=n=>{ hp=Math.min(hpMaxOf(),hp+n); hpHud(); }; window.hpNow=()=>hp; window.zbInfo=()=>zombies.map(z=>({tier:z.tier,hp:z.hp,max:z.max,dead:z.dead,x:z.x,z:z.z}));
   window.pp=()=>[P.position.x,P.position.z];
   window.tp=(x,z)=>{ P.position.set(x,0,z); curCx=Math.floor(x/CS); curCz=Math.floor(z/CS); updateChunks(); addExp(curCx,curCz);
@@ -384,7 +410,7 @@ function startGame(){
     torch.position.set(P.position.x,3.2,P.position.z);
     const ccx=Math.floor(P.position.x/CS),ccz=Math.floor(P.position.z/CS); if(ccx!==curCx||ccz!==curCz){ curCx=ccx; curCz=ccz; updateChunks(); if(addExp(ccx,ccz)){ gainXp(2); profile.sg=(profile.sg||0)+1; if(profile.sg===6||profile.sg===20) rebuildAll(); if(profile.sg>=30){ profile.sg=15; guide(); } } }
     const dep=Math.round(Math.hypot(P.position.x,P.position.z)); $('dp').textContent=dep.toLocaleString(); const nb=biomeIdx(dep); if(nb!==curBi){ curBi=nb; onBiome(); } ceil.position.x=P.position.x; ceil.position.z=P.position.z;
-    updateZombies(dt,now); invul=Math.max(0,invul-dt); if(now/1000-lastHit>8&&hp<hpMaxOf()) hp=Math.min(hpMaxOf(),hp+dt*1.5); hpHud();
+    updateZombies(dt,now); updateBombs(dt,now); invul=Math.max(0,invul-dt); if(now/1000-lastHit>8&&hp<hpMaxOf()) hp=Math.min(hpMaxOf(),hp+dt*1.5); hpHud();
     if(fxVoidOrb.visible) fxVoidOrb.rotation.y+=dt*1.6; petRoot.position.y=1.65+Math.sin(now/380)*.09; eMat.emissiveIntensity=.55+.35*Math.sin(now/450); for(const c of chunks.values()) c.fl.forEach(o=>{ o.m.position.y=o.y0+Math.sin(now/900+o.ph)*.3; if(o.spin===1) o.m.rotation.y+=dt*.3; else if(o.spin===2) o.m.rotation.z+=dt*.8; else o.m.rotation.z+=dt*1.5; }); petM.ore.rotation.y+=dt*1.5; petM.void.rotation.y+=dt*1.5;
     { const vOn=profile.pets&&profile.pets.eq==='void'&&profile.pets.own.void; if(vOn){ pulseT+=dt; if(pulseT>=60){ pulseT=0; pulseL=1+petLv('void'); toast('虛空精靈照亮了整個世界！'); } } else pulseT=0; if(pulseL>0) pulseL-=dt; }
     { const cd=Math.round(yaw*57.3); if(cd!==lastCd){ lastCd=cd; $('cmpr').style.transform='rotate('+cd+'deg)'; } }
@@ -412,10 +438,7 @@ function startGame(){
       else if(used()>=capOf()) toast('背包已滿，請先出售');
       else if(cd<=0){ cd=.45; swing=.35; face=Math.atan2(tg.x-P.position.x,tg.z-P.position.z); tg.hp-=dmgPw(); profile.hits=(profile.hits||0)+1;
         burst(tg.x,.8,tg.z,tg.d.c,6);
-        if(tg.hp<=0){ tg.hp=0; tg.g.visible=false; tg.c.off=true; tg.t=tg.perm?1e9:30; (profile.dug[tg.ck]=profile.dug[tg.ck]||{})[tg.i]=tg.perm?-1:Date.now(); burst(tg.x,.8,tg.z,tg.d.sc||tg.d.c,14);
-          if(tg.d.id==='wall'){ toast('岩壁崩塌了！'); save(); } else { const dm=new THREE.Mesh(pg,new THREE.MeshBasicMaterial({color:tg.d.sc||tg.d.c})); dm.scale.setScalar(2); dm.position.set(tg.x,.8,tg.z); S.add(dm); drops.push({m:dm,t:0});
-          profile.found=profile.found||{}; const first=!profile.found[tg.d.id]; profile.found[tg.d.id]=1; profile.inv[tg.d.id]=(profile.inv[tg.d.id]||0)+1; profile.mined=(profile.mined||0)+1; gainXp(1); if(profile.pets&&profile.pets.eq==='crystal'&&profile.pets.own.crystal&&Math.random()<(.05+.004*petLv('crystal'))&&used()<capOf()){ profile.inv[tg.d.id]=(profile.inv[tg.d.id]||0)+1; setTimeout(()=>toast('礦晶獸複製了一份'+tg.d.n+'！'),800); } refresh();
-          toast((first?'NEW！ ':'')+'獲得 '+tg.d.n); save(); setTimeout(checkAch,1700); lucky(tg); } } } }
+        if(tg.hp<=0) breakOre(tg,false); } }
     for(const q of pts){ if(q.l>0){ q.l-=dt; q.v.y-=9*dt; q.m.position.addScaledVector(q.v,dt); if(q.l<=0) q.m.visible=false; } }
     for(let i=drops.length-1;i>=0;i--){ const d=drops[i]; d.t+=dt; d.m.position.lerp(new THREE.Vector3(P.position.x,1.2,P.position.z),Math.min(1,d.t*3)); if(d.t>.5){ S.remove(d.m); d.m.material.dispose(); drops.splice(i,1); } }
     saveT+=dt; if(saveT>8){saveT=0;profile.x=P.position.x;profile.z=P.position.z;save();}
@@ -427,28 +450,28 @@ function startGame(){
 const PK=[['wood','木製十字鎬',0,5,0x8b5a2b],['crush','碎岩十字鎬',150,10,0x999999],['steel','鐵鋼十字鎬',600,22,0xb8c4d0],['gold','黃金十字鎬',2500,45,0xffd34a],['crystal','水晶十字鎬',10000,90,0x6fe0ff],['amethyst','紫晶十字鎬',40000,180,0xb36bff],['obsidian','黑曜十字鎬',150000,350,0x2a2a44],['energy','能量十字鎬',600000,700,0x39ff88],['meteor','星隕十字鎬',2500000,1500,0xff6bd6],['abyssp','深淵十字鎬',8250000,2400,0x2a1f4a,0x7a5cff,5000],['stellar','奇點脈衝鎬',33333333,3260,0x14202e,0x40ffe0,13500,'失落科技鍛造，可震碎星淵的奇點。']].map(a=>({id:a[0],n:a[1],price:a[2],pw:a[3],col:a[4],glow:a[5],need:a[6],desc:a[7]}));
 const curPk=()=>PK.find(k=>k.id===(profile&&profile.pickaxe))||PK[0], curPw=()=>curPk().pw;
 const hex=c=>'#'+c.toString(16).padStart(6,'0');
-function refresh(){ if($('cap')) $('cap').textContent=used()+'/'+capOf(); $('coin').textContent=(profile.coins||0).toLocaleString(); $('pk').textContent=curPk().n; if(window.setPkColor) setPkColor(curPk().col,curPk().glow,curPk().id); if($('tc')){ $('tc').style.display=profile.torchOwn?'block':'none'; $('tc').style.opacity=profile.torchOn?1:.45; } if(window.applyLook) applyLook(); if(window.petInfo) petInfo(); }
+function refresh(){ if($('cap')) $('cap').textContent=used()+'/'+capOf(); $('coin').textContent=(profile.coins||0).toLocaleString(); $('pk').textContent=curPk().n; if(window.setPkColor) setPkColor(curPk().col,curPk().glow,curPk().id); if($('tc')){ $('tc').style.display=profile.torchOwn?'block':'none'; $('tc').style.opacity=profile.torchOn?1:.45; } if(window.applyLook) applyLook(); if(window.petInfo) petInfo(); if($('bsm')){ $('bsm').textContent='💣'+bombN('small'); $('bbg').textContent='💥'+bombN('big'); $('bsm').style.opacity=bombN('small')?1:.45; $('bbg').style.opacity=bombN('big')?1:.45; } }
 function sell(o,all){ try{ sell2(o,all); }catch(e){ $('bagmsg').className='msg'; $('bagmsg').textContent='出售失敗：'+e.message; } }
 function sell2(o,all){ $('bagmsg').className='msg ok'; const have=(profile.inv||{})[o.id]||0, n=all?have:Math.min(1,have); if(n<=0) return;
   profile.inv[o.id]=have-n; const g=n*o.p; profile.coins=(profile.coins||0)+g; profile.sold=(profile.sold||0)+g; refresh(); save(); renderBag(); checkAch();
   $('bagmsg').textContent='出售 '+n+' 件'+o.n+'，獲得 '+g.toLocaleString()+' 金幣'; }
 function renderBag(){ renderBag0(); petRows($('bagl')); }
 function renderBag0(){ $('bagc').textContent='容量 '+used()+' / '+capOf(); const l=$('bagl'); l.innerHTML=''; if(!used()){ const e=document.createElement('div'); e.className='note'; e.textContent='背包是空的'; l.append(e); } OD.forEach(o=>{ const n=(profile.inv||{})[o.id]||0; if(!n) return; const r=document.createElement('div'); r.className='row';
-  const sw=document.createElement('div'); sw.className='sw'; sw.style.background=hex(o.sc||o.c); const t=two(o.n+' ×'+n,o.p+' 金/件');
+  const sw=document.createElement('div'); sw.className='sw'; sw.style.background=hex(o.sc||o.c); const t=two(o.n+' ×'+n,fmtP(o.p)+' 金/件');
   const b1=document.createElement('button'); b1.className='b s'; b1.textContent='賣1'; b1.onclick=()=>sell(o,false);
   const b2=document.createElement('button'); b2.className='b'; b2.textContent='全賣'; b2.onclick=()=>sell(o,true); r.append(sw,t,b1,b2); l.append(r); }); }
 $('bag').onclick=()=>{ $('bagmsg').textContent=''; $('bagp').style.display='flex'; try{ renderBag(); }catch(e){ $('bagl').textContent='背包載入錯誤：'+e.message; } };
 let shopTab='';
 function pickRows(l){ const rn=document.createElement('div'); rn.className='note'; rn.textContent='遺物加成：稿子傷害 +'+Math.round(relicBonus()*100)+'%（每 5 個遺物 +8%）'; l.append(rn); PK.forEach(k=>{ const own=(profile.owned||['wood']).includes(k.id), eq=curPk().id===k.id, r=document.createElement('div'); r.className='row';
-    const sw=document.createElement('div'); sw.className='sw'; sw.style.background=hex(k.col); const t=two(k.n,'挖掘力 '+k.pw+'・攻擊 '+(2*(PK.indexOf(k)+1))+'・'+(k.price?k.price.toLocaleString()+' 金':'免費'));
+    const sw=document.createElement('div'); sw.className='sw'; sw.style.background=hex(k.col); const t=two(k.n,'挖掘力 '+k.pw+'・攻擊 '+(2*(PK.indexOf(k)+1))+'・'+(k.price?fmtP(k.price)+' 金':'免費'));
     const b=document.createElement('button'); b.className='b'+(eq?' s':''); b.textContent=eq?'裝備中':own?'裝備':'購買'; b.disabled=eq; if(!own&&k.need&&(profile.maxDepth||0)<k.need){ b.textContent='需 '+k.need.toLocaleString()+'m'; b.disabled=true; b.className='b s'; }
     b.onclick=()=>pickAct(k);
     r.append(sw,t,b); l.append(r); if(k.desc){ const dn=document.createElement('div'); dn.className='note'; dn.style.margin='-4px 0 6px 36px'; dn.textContent=k.desc; l.append(dn); } }); }
 function renderShop(){ $('shopc').textContent='目前金幣：'+(profile.coins||0).toLocaleString(); const l=$('shopl'); l.innerHTML='';
-  const bar=document.createElement('div'); bar.style.display='flex'; bar.style.gap='8px';
-  [['pick','稿子'],['pet','寵物'],['fit','服裝'],['veh','載具'],['up','強化']].forEach(a=>{ const b=document.createElement('button'); b.className='b'+(shopTab===a[0]?'':' s'); b.textContent=a[1]; b.onclick=()=>{ shopTab=shopTab===a[0]?'':a[0]; shopMsg(''); renderShop(); }; bar.append(b); }); l.append(bar);
+  [[['pick','稿子'],['pet','寵物'],['fit','服裝']],[['veh','載具'],['up','強化'],['item','道具']]].forEach(row=>{ const bar=document.createElement('div'); bar.style.display='flex'; bar.style.gap='8px';
+    row.forEach(a=>{ const b=document.createElement('button'); b.className='b'+(shopTab===a[0]?'':' s'); b.textContent=a[1]; b.onclick=()=>{ shopTab=shopTab===a[0]?'':a[0]; shopMsg(''); renderShop(); }; bar.append(b); }); l.append(bar); });
   if(!shopTab){ const e=document.createElement('div'); e.className='note'; e.textContent='點上方按鈕查看商品'; l.append(e); return; }
-  if(shopTab==='pick') pickRows(l); else if(shopTab==='pet') petShopRows(l); else if(shopTab==='fit') fitRows(l); else if(shopTab==='veh') vehRows(l); else { upRows(l); torchRow(l); } }
+  if(shopTab==='pick') pickRows(l); else if(shopTab==='pet') petShopRows(l); else if(shopTab==='fit') fitRows(l); else if(shopTab==='veh') vehRows(l); else if(shopTab==='item') itemRows(l); else { upRows(l); torchRow(l); } }
 $('shop').onclick=()=>{ $('shopmsg').textContent=''; shopTab=''; renderShop(); $('shopp').style.display='flex'; };
 const CX=[['stone','普通石塊','普通',5,0x8a8a8a],['coal','煤礦','普通',12,0x666677],['copper','銅礦','不常見',30,0xff9a4a],['iron','鐵礦','不常見',55,0xe8e0d8],['gold','黃金礦','稀有',180,0xffd34a],['bcrystal','藍水晶','稀有',350,0x59b8ff],['amethyst','紫水晶','史詩',900,0xb36bff],['ruby','紅寶石礦','史詩',1800,0xff4a6a],['lava','熔岩礦','傳說',5000,0xff7a1a],['meteor','星隕礦','傳說',12000,0x8a7aff],['fossil','遠古化石礦','神話',30000,0xd8c9a0],['void','虛空核心','神話',80000,0xc040ff],['abyss','深淵晶','深淵',150000,0x7a5cff],['prism','稜光晶','深淵',400000,0x40ffe0],['omega','終末晶核','深淵',1000000,0xff3a6e],['quantum','量子鉍晶','星域',4800000,0x40e0ff],['singularity','星淵奇點','星域',15000000,0xff2aff]];
 const RC={'普通':'#bbb','不常見':'#6fdc6f','稀有':'#59b8ff','史詩':'#c07bff','傳說':'#ffb030','神話':'#ff5a7a','深淵':'#7a5cff','星域':'#40e0ff'};
@@ -605,7 +628,7 @@ const atkBase=()=>2*(Math.max(0,PK.findIndex(k=>k.id===(profile&&profile.pickaxe
 const dmgPw=()=>curPw()*(1+relicBonus()+mineBonus()), atkPw=()=>atkBase()*(1+relicBonus()+atkBonus());
 function upgHp(){ const lv=profile.hpLv||0; if(lv>=80) return shopMsg('血量已達上限 500'); const c=hpCost(lv); if((profile.coins||0)<c) return shopMsg(lack(c));
   profile.coins-=c; profile.hpLv=lv+1; shopMsg('血量上限提升到 '+hpMaxOf(),1); refresh(); if(window.hpAdd) window.hpAdd(5); save(); renderShop(); }
-function hpRow(l){ const lv=profile.hpLv||0,done=lv>=80,r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'+(done?' s':''); b.disabled=done; b.textContent=done?'已滿':hpCost(lv).toLocaleString()+' 金'; b.onclick=upgHp;
+function hpRow(l){ const lv=profile.hpLv||0,done=lv>=80,r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'+(done?' s':''); b.disabled=done; b.textContent=done?'已滿':fmtP(hpCost(lv))+' 金'; b.onclick=upgHp;
   r.append(two('❤ 血量 Lv '+lv,done?'上限 500':hpMaxOf()+' → '+(hpMaxOf()+5)),b); l.append(r); }
 const FISH=[{id:'whale',n:'鯨魚',p:50,eff:'挖礦傷害 +2%'},{id:'marlin',n:'旗魚',p:25,eff:'挖礦傷害 +4%'},{id:'clown',n:'小丑魚',p:14,eff:'挖礦傷害 +6%'},{id:'octo',n:'章魚',p:9.5,eff:'挖礦傷害 +8%'},{id:'turtle',n:'烏龜',p:1,eff:'永久亮度全開・挖礦傷害 +10%・攻擊傷害 +10%'},{id:'shark',n:'鯊魚',p:.5,eff:'移動速度・挖礦傷害・攻擊傷害・亮度 各 +25%'}];
 const fishN=id=>((profile&&profile.fish&&profile.fish[id])||0);
@@ -622,13 +645,23 @@ function renderLottery(){ $('loc').textContent='殭屍幣 '+(Math.round((profile
   const own=FISH.filter(f=>fishN(f.id)>0); if(!own.length){ const e=document.createElement('div'); e.className='note'; e.textContent='還沒有抽到任何東西'; o.append(e); }
   own.forEach(f=>{ const r=document.createElement('div'); r.className='row'; const a=document.createElement('span'); a.textContent=f.n+' x'+fishN(f.id); const b=document.createElement('span'); b.textContent=f.eff.split('・')[0]; b.style.color='var(--mut)'; b.style.fontSize='12px'; r.append(a,b); o.append(r); });
   if(own.length){ const t=document.createElement('div'); t.className='note'; t.style.whiteSpace='normal'; t.textContent='目前加成：挖礦傷害 +'+pct(mineBonus())+'%・攻擊傷害 +'+pct(atkBonus())+'%'+(fishN('shark')?'・移動速度 +'+pct(.25*fishN('shark'))+'%・亮度 +'+pct(lightMul()-1)+'%':'')+(fishN('turtle')?'・亮度全開':''); o.append(t); } }
+const BOMBS=[{id:'small',n:'小炸藥',ic:'💣',dmg:100,price:1000,r:3.2,fuse:1},{id:'big',n:'大炸藥',ic:'💥',dmg:10000,price:100000,r:6.5,fuse:1}], BOMB_HURT=20, BOMB_MAX=9999, shopQty={small:1,big:1};
+const bombN=id=>((profile&&profile.bombs&&profile.bombs[id])||0);
+function buyBomb(id,qty){ const b=BOMBS.find(x=>x.id===id); if(!b) return; qty=Math.floor(+qty); if(!(qty>=1)) return shopMsg('請輸入要購買的數量'); qty=Math.min(qty,BOMB_MAX);
+  profile.bombs=profile.bombs||{small:0,big:0}; if(bombN(id)+qty>BOMB_MAX) return shopMsg('最多持有 '+BOMB_MAX+' 顆'); const cost=b.price*qty; if((profile.coins||0)<cost) return shopMsg(lack(cost));
+  profile.coins-=cost; profile.bombs[id]=bombN(id)+qty; shopMsg('已購買 '+qty+' 顆'+b.n+'（'+fmtP(cost)+' 金）',1); refresh(); save(); renderShop(); }
+function itemRows(l){ BOMBS.forEach(b=>{ const q=shopQty[b.id]||1; const r=document.createElement('div'); r.className='row'; r.append(two(b.ic+' '+b.n+'（持有 '+bombN(b.id)+'）','傷害 '+fmtP(b.dmg)+'・爆炸 '+b.fuse+' 秒・每顆 '+fmtP(b.price)+' 金')); l.append(r);
+    const chips=document.createElement('div'); chips.style.cssText='display:flex;gap:6px;margin:0 0 4px'; [1,5,10,50,100].forEach(n=>{ const c=document.createElement('button'); c.className='b'+(q===n?'':' s'); c.style.cssText='padding:6px 0;font-size:13px;margin:0'; c.textContent='×'+n; c.onclick=()=>{ shopQty[b.id]=n; renderShop(); }; chips.append(c); }); l.append(chips);
+    const line=document.createElement('div'); line.style.cssText='display:flex;gap:8px;align-items:center;margin-bottom:10px'; const inp=document.createElement('input'); inp.type='number'; inp.min=1; inp.max=BOMB_MAX; inp.value=q; inp.style.cssText='width:90px;margin:0'; const buy=document.createElement('button'); buy.className='b'; buy.style.margin='0';
+    const upd=()=>{ const n=Math.max(1,Math.floor(+inp.value)||1); buy.textContent='購買 '+n+' 顆（'+fmtP(b.price*n)+' 金）'; }; inp.oninput=()=>{ shopQty[b.id]=Math.max(1,Math.floor(+inp.value)||1); upd(); }; upd(); buy.onclick=()=>buyBomb(b.id,inp.value); line.append(inp,buy); l.append(line); }); }
 function petMsg(t,ok){ ['shopmsg','bagmsg'].forEach(i=>{ const m=$(i); if(m){ m.className='msg'+(ok?' ok':''); m.textContent=t; } }); }
 function upgPet(id){ const p=PETS.find(x=>x.id===id); if(!p||!p.up) return; const P2=profile.pets; if(!P2||!P2.own[id]) return; P2.lv=P2.lv||{}; const lv=P2.lv[id]||0;
   if(lv>=p.up.max) return petMsg('已達最高等級'); if((profile.coins||0)<p.up.price) return petMsg(lack(p.up.price));
   profile.coins-=p.up.price; P2.lv[id]=lv+1; petMsg(p.n+' 升到 Lv '+(lv+1),1); refresh(); save(); if(shopTab==='pet') renderShop(); if($('bagp').style.display==='flex') renderBag(); }
 const TORCH_PRICE=35000;
 function shopMsg(t,ok){ const m=$('shopmsg'); m.className='msg'+(ok?' ok':''); m.textContent=t; }
-const lack=p=>'金幣不足，還差 '+(p-(profile.coins||0)).toLocaleString()+' 金';
+function fmtP(n){ n=Math.round(n); const a=Math.abs(n); if(a>=1e6){ const r=Math.round(n/1e6*100)/100; if(Math.abs(r*1e6-n)<1) return r+'M'; } else if(a>=1000){ const r=Math.round(n/1000*10)/10; if(Math.abs(r*1000-n)<1) return r+'K'; } return n.toLocaleString(); }
+const lack=p=>'金幣不足，還差 '+fmtP(p-(profile.coins||0))+' 金';
 function pickAct(k){ const own=(profile.owned||['wood']).includes(k.id);
   if(!own){ if(k.need&&(profile.maxDepth||0)<k.need) return shopMsg('需先抵達 '+k.need.toLocaleString()+' m'); if((profile.coins||0)<k.price) return shopMsg(lack(k.price)); profile.coins-=k.price; profile.owned=(profile.owned||['wood']).concat(k.id); shopMsg('已購買 '+k.n,1); }
   else{ profile.pickaxe=k.id; shopMsg('已裝備 '+k.n,1); }
@@ -642,21 +675,21 @@ function toggleTorch(){ if(!profile.torchOwn) return; profile.torchOn=profile.to
 function buyPet(id){ const p=PETS.find(x=>x.id===id); if(!p||!p.price) return; const P2=profile.pets=profile.pets||{own:{},eq:null}; if(P2.own[id]) return; if((profile.coins||0)<p.price) return shopMsg(lack(p.price)); profile.coins-=p.price; P2.own[id]=1; shopMsg('獲得 '+p.n+'，到背包裝備',1); refresh(); save(); renderShop(); }
 function equipPet(id){ const P2=profile.pets; if(!P2||!P2.own[id]) return; P2.eq=P2.eq===id?null:id; refresh(); save(); renderBag(); }
 function upRows(l){ Object.keys(UPG).forEach(key=>{ const d=UPG[key],lv=profile[key]||0,done=lv>=d.vals.length-1,price=d.prices[lv],r=document.createElement('div'); r.className='row';
-  const b=document.createElement('button'); b.className='b'+(done?' s':''); b.disabled=done; b.textContent=done?'已滿級':price.toLocaleString()+' 金';
+  const b=document.createElement('button'); b.className='b'+(done?' s':''); b.disabled=done; b.textContent=done?'已滿級':fmtP(price)+' 金';
   if(!done&&d.need&&lv===d.needLv&&(profile.maxDepth||0)<d.need){ b.textContent='需 '+d.need.toLocaleString()+'m'; b.disabled=true; b.className='b s'; }
   b.onclick=()=>upgAct(key); r.append(two(d.ic+' '+d.n+' Lv'+(lv+1),(done?'':d.vals[lv]+' → ')+d.vals[done?lv:lv+1]),b); l.append(r); }); hpRow(l); }
 function shopRow(l,t,sub,label,fn,dis){ const r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'+(dis?' s':''); b.disabled=!!dis; b.textContent=label; b.onclick=fn; r.append(two(t,sub),b); l.append(r); }
-function torchRow(l){ if(!profile.torchOwn){ shopRow(l,'🔦 火把','永久・可自由開關',TORCH_PRICE.toLocaleString()+' 金',buyTorch,false); return; } shopRow(l,'🔦 火把','已擁有・目前'+(profile.torchOn?'開啟':'關閉'),profile.torchOn?'關閉':'開啟',toggleTorch,false); }
-function petShopRows(l){ PETS.forEach(p=>{ if(!p.price) return; const own=profile.pets&&profile.pets.own[p.id]; shopRow(l,p.n,p.r+'・'+petIntro(p),own?'已擁有':p.price.toLocaleString()+' 金',()=>buyPet(p.id),own); });
+function torchRow(l){ if(!profile.torchOwn){ shopRow(l,'🔦 火把','永久・可自由開關',fmtP(TORCH_PRICE)+' 金',buyTorch,false); return; } shopRow(l,'🔦 火把','已擁有・目前'+(profile.torchOn?'開啟':'關閉'),profile.torchOn?'關閉':'開啟',toggleTorch,false); }
+function petShopRows(l){ PETS.forEach(p=>{ if(!p.price) return; const own=profile.pets&&profile.pets.own[p.id]; shopRow(l,p.n,p.r+'・'+petIntro(p),own?'已擁有':fmtP(p.price)+' 金',()=>buyPet(p.id),own); });
   const P2=profile.pets||{own:{}},ups=PETS.filter(p=>p.up&&P2.own[p.id]); if(!ups.length) return; const h=document.createElement('div'); h.className='note'; h.style.margin='10px 0 2px'; h.textContent='寵物升級'; l.append(h);
-  ups.forEach(p=>{ const lv=petLv(p.id),full=lv>=p.up.max; shopRow(l,p.n+' Lv '+lv+'/'+p.up.max,full?'已升到最高等級':'下一級 '+p.up.price.toLocaleString()+' 金',full?'滿級':'升級',()=>upgPet(p.id),full); }); }
+  ups.forEach(p=>{ const lv=petLv(p.id),full=lv>=p.up.max; shopRow(l,p.n+' Lv '+lv+'/'+p.up.max,full?'已升到最高等級':'下一級 '+fmtP(p.up.price)+' 金',full?'滿級':'升級',()=>upgPet(p.id),full); }); }
 function petUpBtn(p){ const b=document.createElement('button'); b.className='b s'; b.style.padding='4px 8px'; b.style.fontSize='12px';
   if(!p.up){ b.textContent='無法升級'; b.disabled=true; return b; } if(petLv(p.id)>=p.up.max){ b.textContent='滿級'; b.disabled=true; return b; } b.textContent='升級'; b.onclick=()=>upgPet(p.id); return b; }
 function petRows(l){ const P2=profile.pets||{own:{},eq:null,lv:{}},h=document.createElement('div'); h.className='note'; h.style.margin='10px 0 2px'; h.textContent='寵物'; l.append(h);
   const have=PETS.filter(p=>P2.own[p.id]); if(!have.length){ const e=document.createElement('div'); e.className='note'; e.textContent='尚未擁有寵物'; l.append(e); return; }
   have.forEach(p=>{ const eq=P2.eq===p.id,r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'+(eq?'':' s'); b.textContent=eq?'卸下':'裝備'; b.onclick=()=>equipPet(p.id);
     r.append(two(p.n+(p.up?' Lv '+petLv(p.id):'')+(eq?'（裝備中）':''),p.r+'・'+petIntro(p)),petUpBtn(p),b); l.append(r);
-    const n=document.createElement('div'); n.className='note'; n.style.margin='-4px 0 6px 4px'; n.textContent=p.up?(petLv(p.id)>=p.up.max?'已升到最高等級':'下一級需要 '+p.up.price.toLocaleString()+' 金（'+petLv(p.id)+'/'+p.up.max+'）'):'此寵物無法升級'; l.append(n); }); }
+    const n=document.createElement('div'); n.className='note'; n.style.margin='-4px 0 6px 4px'; n.textContent=p.up?(petLv(p.id)>=p.up.max?'已升到最高等級':'下一級需要 '+fmtP(p.up.price)+' 金（'+petLv(p.id)+'/'+p.up.max+'）'):'此寵物無法升級'; l.append(n); }); }
 function petCodex(l){ const P2=profile.pets||{own:{}},h=document.createElement('div'); h.className='note'; h.style.margin='12px 0 4px'; h.textContent='寵物圖鑑 '+PETS.filter(p=>P2.own[p.id]).length+' / '+PETS.length; l.append(h); const g=cxGrid(l);
   PETS.forEach(p=>{ const have=!!P2.own[p.id],hid=!have&&(p.id==='void'||p.id==='swift'); cxCell(g,hid?'？？？':p.n,have?p.r+(p.up?' Lv'+petLv(p.id):''):(hid?'未發現':'未獲得'),have?'#ffb030':'',have?(p.id==='ore'?'#59b8ff':p.id==='crystal'?'#ffb030':'#7a5cff'):'#15121c',have?p.n+'・'+p.r+'・'+petIntro(p):(hid?'尚未發現':p.n+'・'+p.r+'・還沒有取得')); }); }
 addEventListener('error',e=>gt('錯誤：'+e.message));
@@ -774,7 +807,7 @@ const VEH=[{id:'skate',n:'滑板',price:800000,sp:1},{id:'bike',n:'腳踏車',pr
 const vehSp=()=>{ const v=profile&&profile.veh,d=v&&v.eq&&v.own&&v.own[v.eq]?VEH.find(x=>x.id===v.eq):null; return d?d.sp:0; };
 function fitRows(l){ const F=profile.fit; OUTFITS.forEach(o=>{ const own=o.price===0||F.own[o.id],eq=(F.eq||'default')===o.id,r=document.createElement('div'); r.className='row';
   const sw=document.createElement('div'); sw.className='sw'; sw.style.background=hex(o.shirt); const b=document.createElement('button'); b.className='b'+(eq?' s':''); b.disabled=eq; b.textContent=eq?'穿著中':own?'穿上':'購買'; b.onclick=()=>fitAct(o.id);
-  r.append(sw,two(o.n,o.price?o.price.toLocaleString()+' 金':'免費'),b); l.append(r); }); }
+  r.append(sw,two(o.n,o.price?fmtP(o.price)+' 金':'免費'),b); l.append(r); }); }
 function fitAct(id){ const o=OUTFITS.find(x=>x.id===id),F=profile.fit; if(!o) return; const own=o.price===0||F.own[id];
   if(!own){ if((profile.coins||0)<o.price) return shopMsg(lack(o.price)); profile.coins-=o.price; F.own[id]=1; shopMsg('已購買 '+o.n,1); } else { F.eq=id; shopMsg('已穿上 '+o.n,1); }
   refresh(); save(); renderShop(); }
@@ -784,7 +817,7 @@ function vehAct(id){ const d=VEH.find(x=>x.id===id),V=profile.veh; if(!d) return
   else{ V.eq=V.eq===id?null:id; vehMsg(V.eq?'已裝備 '+d.n:'已卸下 '+d.n,1); }
   refresh(); save(); if(shopTab==='veh') renderShop(); }
 function vehRows(l){ const V=profile.veh; VEH.forEach(d=>{ const own=V.own[d.id],eq=V.eq===d.id,r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'+(eq?' s':''); b.textContent=eq?'卸下':own?'裝備':'購買'; b.onclick=()=>vehAct(d.id);
-    r.append(two(d.n+(eq?'（裝備中）':''),'速度 +'+d.sp+'・'+(own?'已擁有':d.price.toLocaleString()+' 金')),b); l.append(r); }); }
+    r.append(two(d.n+(eq?'（裝備中）':''),'速度 +'+d.sp+'・'+(own?'已擁有':fmtP(d.price)+' 金')),b); l.append(r); }); }
 /* ---------- 在線玩家（Firebase Realtime Database；沒填 FB_CFG 就不啟用，不影響遊戲） ---------- */
 let FBAPP=null,fbRef=null,fbConn=null,fbHB=0,fbAdmin=false,fbSub=null,fbData={},fbOff=0,fbBox=null,fbNote='';
 const fbOn=()=>!!(FB_CFG.apiKey&&FB_CFG.databaseURL);
@@ -816,6 +849,7 @@ function fbDraw(){ const box=fbBox; if(!box) return; box.innerHTML='';
   list.forEach(x=>{ const r=document.createElement('div'); r.className='row'; const a=document.createElement('span'); a.textContent=x.n; const z=document.createElement('span'); z.textContent=fbAgo(x.ago); r.append(a,z); box.append(r); });
   const o=document.createElement('button'); o.className='b s'; o.textContent='登出管理員'; o.onclick=fbAdminLogout; box.append(o); }
 setInterval(()=>{ if(fbAdmin&&$('admp').style.display==='flex') fbDraw(); },5000);
+$('bsm').onclick=()=>{ if(window.placeBomb) placeBomb('small'); }; $('bbg').onclick=()=>{ if(window.placeBomb) placeBomb('big'); };
 $('lo').onclick=()=>{ loMsg(''); renderLottery(); $('lop').style.display='flex'; }; $('lob').onclick=drawLottery;
 boot2();
 </script></body></html>
