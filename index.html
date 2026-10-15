@@ -75,6 +75,11 @@ textarea,input{font-size:16px !important}
 #bsm{bottom:calc(42px + env(safe-area-inset-bottom,0px));background:#8a4a1acc}
 #bbg{bottom:calc(102px + env(safe-area-inset-bottom,0px));background:#b02a2acc}
 @media (orientation:landscape){#bsm{right:110px;bottom:calc(14px + env(safe-area-inset-bottom,0px))}#bbg{right:110px;bottom:calc(72px + env(safe-area-inset-bottom,0px))}}
+#zonp .row{padding:3px 0;font-size:12px}
+#zonp .row .two small{font-size:10px}
+#zonp .row button{padding:3px 9px;font-size:12px;min-width:56px}
+#zonp .msg{min-height:14px;font-size:12px;margin:2px 0}
+#zonp .b.s:last-child{padding:6px;font-size:13px}
 </style></head><body>
 <canvas id="cv"></canvas>
 <div id="hud"><div>👤 <span id="pn">-</span>　💰 <span id="coin">0</span><br>⛏ <span id="pk">木製十字鎬</span>　🎒 <span id="cap">0/50</span></div><div>⬇ <span id="dp">0</span>m　<button id="out" class="b s ui" style="width:auto;margin:0;padding:4px 10px;font-size:13px">登出</button><br><span id="bm"></span></div></div>
@@ -86,7 +91,7 @@ textarea,input{font-size:16px !important}
 <div class="screen" id="bagp" style="display:none"><div class="card"><h1 style="font-size:22px">背包</h1><div class="note" id="bagc"></div><div id="bagl"></div><div id="bagmsg" class="msg ok"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="shopp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">商店</h1><div class="note" id="shopc"></div><div id="shopl"></div><div id="shopmsg" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="cxp" style="display:none"><div class="card" style="max-width:420px;max-height:90vh;overflow:auto"><h1 style="font-size:22px">礦物圖鑑</h1><div class="note" id="cxc"></div><div id="cxl"></div><div class="note" id="cxd" style="white-space:normal;min-height:34px;margin-top:6px">點一格可以查看介紹</div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
-<div class="screen" id="zonp" style="display:none"><div class="card" style="max-width:420px"><h1 style="font-size:22px">礦區</h1><div id="zonl"></div><div id="zonm" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
+<div class="screen" id="zonp" style="display:none"><div class="card" style="max-width:330px;padding:14px"><h1 style="font-size:18px;margin-bottom:4px">礦區</h1><div id="zonl"></div><div id="zonm" class="msg"></div><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
 <div class="screen" id="pwp" style="display:none;z-index:8"><div class="card"><h1 style="font-size:22px">管理員驗證</h1><div class="note">請輸入密碼</div><input id="pwi" type="password" inputmode="numeric" placeholder="密碼"><div id="pwm" class="msg"></div><button class="b" id="pwok">確認</button><button class="b s" id="pwno">取消</button></div></div>
 <div class="screen" id="rmp" style="display:none;z-index:8"><div class="card" style="text-align:center"><h1 style="font-size:22px">帳號建立成功</h1><div class="note" style="text-align:center">請牢記你的玩家名稱</div><div id="rmn" style="font-size:26px;font-weight:700;color:var(--ac);margin:12px 0;word-break:break-all"></div><div class="note" id="rmt" style="text-align:center"></div><div class="note" style="text-align:center">進度會自動永久保存</div><button class="b" id="rmok">我記住了，開始遊戲</button></div></div>
 <div class="screen" id="expp" style="display:none;z-index:8"><div class="card"><h1 style="font-size:22px">匯出存檔碼</h1><div class="note">貼到 GitHub 版註冊頁的匯入欄</div><textarea id="expt" readonly rows="4"></textarea><div id="expm" class="msg ok"></div><button class="b" id="expc">複製</button><button class="b s" onclick="this.closest('.screen').style.display='none'">關閉</button></div></div>
@@ -165,7 +170,7 @@ function startGame(){
   $('title').style.display='none';
   ['hud','joy','tip'].forEach(i=>$(i).style.display=(i==='hud'?'flex':'block'));
   $('pn').textContent=profile.name+(offline?'（離線）':'');
-  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('mp').style.display=$('cx').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; profile.dug=profile.dug||{}; profile.exp=profile.exp||{}; profile.poi=profile.poi||[]; profile.rooms=profile.rooms||{}; profile.puzzles=profile.puzzles||{}; profile.biomes=profile.biomes||{}; if(!profile.seed) profile.seed=(Math.random()*4294967296)>>>0; profile.sites=profile.sites||{}; if(profile.xp==null) profile.xp=Math.min(400,Math.floor((profile.maxDepth||0)/5)); profile.pity=profile.pity||0; profile.sg=profile.sg||0; profile.pets=profile.pets||{own:{},eq:null}; if(!profile.pets.own) profile.pets.own={}; if(!profile.pets.lv) profile.pets.lv={}; profile.fit=profile.fit||{own:{},eq:'default'}; if(!profile.fit.own) profile.fit.own={}; profile.veh=profile.veh||{own:{},eq:null}; if(!profile.veh.own) profile.veh.own={}; $('cmp').style.display='block'; setTimeout(()=>{ if(typeof fbStart==='function') fbStart(); },800); profile.cache=profile.cache||{}; profile.hpLv=profile.hpLv||0; profile.fish=profile.fish||{}; $('lo').style.display='block'; profile.bombs=profile.bombs||{small:0,big:0}; profile.blasted=profile.blasted||{}; $('bsm').style.display=$('bbg').style.display='block'; profile.mcoin=profile.mcoin||0; profile.kills=profile.kills||0; $('hpb').style.display='block'; profile.recentT=profile.recentT||[]; if(profile.oreLv>0&&!profile.oreRef){ let sm=0; for(let i=0;i<profile.oreLv&&i<3;i++) sm+=[3000,25000,150000][i]; profile.coins=(profile.coins||0)+sm; profile.oreRef=1; gt('礦脈探測已移除，已退還 '+sm.toLocaleString()+' 金'); } profile.v2=1; refresh();
+  $('coin').textContent=profile.coins||0; profile.inv=profile.inv||{}; $('dig').style.display=$('bag').style.display=$('shop').style.display=$('zn').style.display=$('mp').style.display=$('cx').style.display='block'; profile.found=profile.found||{}; Object.keys(profile.inv).forEach(k=>{if(profile.inv[k]>0)profile.found[k]=1}); profile.chests=profile.chests||{}; profile.relics=profile.relics||{}; profile.ach=profile.ach||{}; profile.zones=profile.zones||{}; profile.dug=profile.dug||{}; profile.exp=profile.exp||{}; profile.poi=profile.poi||[]; profile.rooms=profile.rooms||{}; profile.puzzles=profile.puzzles||{}; profile.biomes=profile.biomes||{}; if(!profile.seed) profile.seed=(Math.random()*4294967296)>>>0; profile.sites=profile.sites||{}; if(profile.xp==null) profile.xp=Math.min(400,Math.floor((profile.maxDepth||0)/5)); profile.pity=profile.pity||0; profile.sg=profile.sg||0; profile.pets=profile.pets||{own:{},eq:null}; if(!profile.pets.own) profile.pets.own={}; if(!profile.pets.lv) profile.pets.lv={}; profile.fit=profile.fit||{own:{},eq:'default'}; if(!profile.fit.own) profile.fit.own={}; if(profile.fit.own.rag||profile.fit.eq==='rag'){ delete profile.fit.own.rag; if(profile.fit.eq==='rag') profile.fit.eq='default'; if(!profile.ragRef){ profile.ragRef=1; profile.coins=(profile.coins||0)+4000; setTimeout(()=>gt('泥巴麻布裝已移除，已退還 4K 金'),1200); } } profile.veh=profile.veh||{own:{},eq:null}; if(!profile.veh.own) profile.veh.own={}; $('cmp').style.display='block'; setTimeout(()=>{ if(typeof fbStart==='function') fbStart(); },800); profile.cache=profile.cache||{}; profile.hpLv=profile.hpLv||0; profile.fish=profile.fish||{}; $('lo').style.display='block'; profile.bombs=profile.bombs||{small:0,big:0}; profile.blasted=profile.blasted||{}; $('bsm').style.display=$('bbg').style.display='block'; profile.mcoin=profile.mcoin||0; profile.kills=profile.kills||0; $('hpb').style.display='block'; profile.recentT=profile.recentT||[]; if(profile.oreLv>0&&!profile.oreRef){ let sm=0; for(let i=0;i<profile.oreLv&&i<3;i++) sm+=[3000,25000,150000][i]; profile.coins=(profile.coins||0)+sm; profile.oreRef=1; gt('礦脈探測已移除，已退還 '+sm.toLocaleString()+' 金'); } profile.v2=1; refresh();
   if(db&&uid&&!localMode&&!offline){ try{ db.doc('grants/'+uid).onSnapshot(sn=>{ if(!sn.exists) return; const d=sn.data(); if(d.nonce&&d.nonce!==profile.lastGrant&&Number.isFinite(d.amount)){ profile.lastGrant=d.nonce; profile.coins=Math.max(0,(profile.coins||0)+d.amount); refresh(); save(); gt((d.amount>0?'管理員發放 +':'管理員扣除 ')+Math.abs(d.amount)+' 金'); } }); }catch(e){} } $('adm').style.display=(profile.name==='Hermes'&&!offline&&(isAdmin||localMode))?'block':'none';
   if(running) return; running=true;
   if(!window.THREE){ alert('3D 引擎載入失敗'); return; }
@@ -180,7 +185,8 @@ function startGame(){
   const obst=[],ores=[],acts=[],rooms=[],zombies=[],rocksAct=[],bombs=[],blasts=[],rg=new THREE.DodecahedronGeometry(1,0);
   // player
   const P=new THREE.Group(),sk=M(0xf2c9a0),sh=M(0x3b6fd6),pt=M(0x3a3a4a);
-  const mk=(g,m,x,y,z)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;P.add(o);return o};
+  const charG=new THREE.Group(); P.add(charG); let riding=null,rideV=null;
+  const mk=(g,m,x,y,z)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;charG.add(o);return o};
   mk(new THREE.BoxGeometry(.7,.8,.4),sh,0,1.2,0); mk(new THREE.BoxGeometry(.5,.5,.5),sk,0,1.85,0);
   const hat=mk(new THREE.BoxGeometry(.58,.2,.58),M(0xf5b942),0,2.17,0);
   mk(new THREE.BoxGeometry(.14,.1,.1),new THREE.MeshBasicMaterial({color:0xfff2b0}),0,2.2,.3);
@@ -190,20 +196,19 @@ function startGame(){
   const mkV=parts=>{ const g=new THREE.Group(); parts.forEach(p=>{ const m=new THREE.Mesh(p[0],M(p[1])); m.position.set(p[2],p[3],p[4]); if(p[5]) m.rotation.z=p[5]; g.add(m); }); g.visible=false; P.add(g); return g; };
   const cyl=new THREE.CylinderGeometry(.32,.32,.1,10),bx=(a,b,c)=>new THREE.BoxGeometry(a,b,c);
   const vSk=mkV([[bx(.55,.07,1.5),0xff7a1a,0,.1,0],[bx(.12,.12,.12),0x222222,-.2,.04,.5],[bx(.12,.12,.12),0x222222,.2,.04,.5],[bx(.12,.12,.12),0x222222,-.2,.04,-.5],[bx(.12,.12,.12),0x222222,.2,.04,-.5]]);
-  const vBk=mkV([[cyl,0x222222,0,.32,.7,1.5708],[cyl,0x222222,0,.32,-.7,1.5708],[bx(.08,.08,1.4),0x2a7aff,0,.62,0],[bx(.5,.06,.3),0x111111,0,.95,-.4]]);
-  const vMt=mkV([[cyl,0x111111,0,.33,.8,1.5708],[cyl,0x111111,0,.33,-.8,1.5708],[bx(.45,.4,1.4),0xd01a1a,0,.65,0],[bx(.5,.12,.5),0x111111,0,.95,-.2],[bx(.3,.3,.1),0xffd34a,0,.7,.78]]);
+  const vBk=mkV([[cyl,0x222222,0,.32,.7,1.5708],[cyl,0x222222,0,.32,-.7,1.5708],[bx(.08,.08,1.4),0x2a7aff,0,.62,0],[bx(.5,.06,.3),0x111111,0,.95,-.4],[bx(.55,.05,.05),0x111111,0,1.12,.5],[bx(.05,.4,.05),0x333333,0,.9,.5]]);
+  const vMt=mkV([[cyl,0x111111,0,.33,.8,1.5708],[cyl,0x111111,0,.33,-.8,1.5708],[bx(.45,.4,1.4),0xd01a1a,0,.65,0],[bx(.5,.12,.5),0x111111,0,.95,-.2],[bx(.3,.3,.1),0xffd34a,0,.7,.78],[bx(.7,.06,.06),0x111111,0,1.16,.52],[bx(.06,.45,.06),0x333333,0,.92,.52]]);
   const mkF=(parent,parts)=>{ const g=new THREE.Group(); parts.forEach(p=>{ const m=new THREE.Mesh(p[0],p[6]?new THREE.MeshStandardMaterial({color:p[1],emissive:p[1],emissiveIntensity:p[6],flatShading:true}):M(p[1])); m.position.set(p[2],p[3],p[4]); if(p[5]) m.rotation.set(p[5][0],p[5][1],p[5][2]); g.add(m); }); g.visible=false; parent.add(g); return g; };
   const cn=(r,h)=>new THREE.ConeGeometry(r,h,5),oc=r=>new THREE.OctahedronGeometry(r),tor=(r,t)=>new THREE.TorusGeometry(r,t,6,18);
   const cy=(a,b,h)=>new THREE.CylinderGeometry(a,b,h,8);
   // 鏡頭在角色背後，所以造型重點放在頭頂、肩膀與背後
-  const fxRag=mkF(P,[[cy(.34,.27,.34),0x7d7f82,0,2.4,0,[0,0,.22]],[bx(.78,.07,.46),0xc8a860,0,.85,0],[bx(.34,.34,.05),0x8a2a2a,.1,1.3,-.23],[bx(.22,.7,.22),0x4a8a4a,-.48,1.2,0],[bx(.5,.1,.06),0x9a8a5a,0,1.62,-.22,[0,0,.4]]]);
-  const fxNeon=mkF(P,[[bx(.62,.85,.32),0xff6a00,0,1.25,-.36],[bx(.8,.08,.46),0xffffff,0,1.05,0,null,.6],[bx(.8,.08,.46),0xffffff,0,1.5,0,null,.6],[cy(.025,.025,.5),0xff00cc,.12,2.62,0],[oc(.09),0xff00cc,.12,2.9,0,null,1],[bx(.3,.22,.42),0x00ffcc,-.18,.11,.05],[bx(.3,.22,.42),0xff00cc,.18,.11,.05]]);
-  const fxSteel=mkF(P,[[bx(.5,.2,.58),0xc0c8d0,-.57,1.72,0],[bx(.5,.2,.58),0xc0c8d0,.57,1.72,0],[bx(.72,.72,.12),0xb0b8c4,0,1.25,-.29],[bx(.76,.46,.12),0xb0b8c4,0,1.25,.25],[bx(.12,.22,.64),0xd8e0e8,0,2.4,0],[bx(.22,.14,.1),0xffe070,0,2.2,.3,null,1],[bx(.06,1,.06),0x6b4a2a,.2,1.3,-.4,[0,0,.5]],[bx(.5,.08,.08),0x9aa0a8,.46,1.76,-.4,[0,0,.5]],[bx(.3,.22,.42),0xb8c0c8,-.18,.11,.05],[bx(.3,.22,.42),0xb8c0c8,.18,.11,.05],[bx(.76,.1,.44),0x707880,0,.82,0]]);
-  const fxKnight=mkF(P,[[cn(.1,.55),0xd8c8ff,-.36,2.42,0,[0,0,1.1],.5],[cn(.1,.55),0xd8c8ff,.36,2.42,0,[0,0,-1.1],.5],[bx(.1,.42,.62),0x7a5cff,0,2.5,0,null,.8],[cn(.17,.65),0x7a5cff,-.6,2.0,0,null,.8],[cn(.17,.65),0x7a5cff,.6,2.0,0,null,.8],[bx(.78,.55,.14),0x1c1c2c,0,1.25,.26],[bx(.5,.07,.16),0x7a5cff,0,1.32,.27,null,.9],[bx(.44,.06,.05),0xff5aff,0,1.9,.28,null,1],[bx(.1,1.4,.05),0xc8b8ff,.18,1.4,-.4,[0,0,.45],1],[bx(.4,.08,.1),0x7a5cff,.0,.8,-.4,[0,0,.45],.8],[bx(.78,.09,.44),0x7a5cff,0,.84,0,null,.6],[bx(.3,.24,.44),0x7a5cff,-.18,.12,.05,null,.5],[bx(.3,.24,.44),0x7a5cff,.18,.12,.05,null,.5]]);
+  const fxNeon=mkF(charG,[[bx(.62,.85,.32),0xff6a00,0,1.25,-.36],[bx(.8,.08,.46),0xffffff,0,1.05,0,null,.6],[bx(.8,.08,.46),0xffffff,0,1.5,0,null,.6],[cy(.025,.025,.5),0xff00cc,.12,2.62,0],[oc(.09),0xff00cc,.12,2.9,0,null,1],[bx(.3,.22,.42),0x00ffcc,-.18,.11,.05],[bx(.3,.22,.42),0xff00cc,.18,.11,.05]]);
+  const fxSteel=mkF(charG,[[bx(.5,.2,.58),0xc0c8d0,-.57,1.72,0],[bx(.5,.2,.58),0xc0c8d0,.57,1.72,0],[bx(.72,.72,.12),0xb0b8c4,0,1.25,-.29],[bx(.76,.46,.12),0xb0b8c4,0,1.25,.25],[bx(.12,.22,.64),0xd8e0e8,0,2.4,0],[bx(.22,.14,.1),0xffe070,0,2.2,.3,null,1],[bx(.06,1,.06),0x6b4a2a,.2,1.3,-.4,[0,0,.5]],[bx(.5,.08,.08),0x9aa0a8,.46,1.76,-.4,[0,0,.5]],[bx(.3,.22,.42),0xb8c0c8,-.18,.11,.05],[bx(.3,.22,.42),0xb8c0c8,.18,.11,.05],[bx(.76,.1,.44),0x707880,0,.82,0]]);
+  const fxKnight=mkF(charG,[[cn(.1,.55),0xd8c8ff,-.36,2.42,0,[0,0,1.1],.5],[cn(.1,.55),0xd8c8ff,.36,2.42,0,[0,0,-1.1],.5],[bx(.1,.42,.62),0x7a5cff,0,2.5,0,null,.8],[cn(.17,.65),0x7a5cff,-.6,2.0,0,null,.8],[cn(.17,.65),0x7a5cff,.6,2.0,0,null,.8],[bx(.78,.55,.14),0x1c1c2c,0,1.25,.26],[bx(.5,.07,.16),0x7a5cff,0,1.32,.27,null,.9],[bx(.44,.06,.05),0xff5aff,0,1.9,.28,null,1],[bx(.1,1.4,.05),0xc8b8ff,.18,1.4,-.4,[0,0,.45],1],[bx(.4,.08,.1),0x7a5cff,.0,.8,-.4,[0,0,.45],.8],[bx(.78,.09,.44),0x7a5cff,0,.84,0,null,.6],[bx(.3,.24,.44),0x7a5cff,-.18,.12,.05,null,.5],[bx(.3,.24,.44),0x7a5cff,.18,.12,.05,null,.5]]);
   const wing=sg=>[[bx(.95,.06,.38),0xc8a0ff,sg*.72,1.78,-.32,[0,0,sg*.45],.9],[bx(.85,.06,.34),0x9a6aff,sg*.78,1.45,-.32,[0,0,sg*.3],.9],[bx(.7,.06,.3),0x7a3aff,sg*.66,1.12,-.32,[0,0,sg*.15],.9]];
-  const fxVoid=mkF(P,[].concat(wing(1),wing(-1),[[tor(.4,.04),0xffd8ff,0,2.65,0,[1.5708,0,0],1],[tor(.72,.04),0x9a6aff,0,.06,0,[1.5708,0,0],1],[cn(.14,.5),0xc8a0ff,-.58,2.0,0,null,1],[cn(.14,.5),0xc8a0ff,.58,2.0,0,null,1],[oc(.16),0xff9aff,0,1.3,.3,null,1]]));
-  const fxVoidOrb=mkF(P,[[oc(.12),0x9a6aff,.8,1.3,0,null,1],[oc(.12),0x9a6aff,-.4,1.0,.7,null,1],[oc(.12),0x9a6aff,-.4,1.6,-.7,null,1]]);
-  [fxRag,fxNeon,fxSteel,fxKnight,fxVoid,fxVoidOrb].forEach(g=>g.scale.setScalar(29/30));
+  const fxVoid=mkF(charG,[].concat(wing(1),wing(-1),[[tor(.4,.04),0xffd8ff,0,2.65,0,[1.5708,0,0],1],[tor(.72,.04),0x9a6aff,0,.06,0,[1.5708,0,0],1],[cn(.14,.5),0xc8a0ff,-.58,2.0,0,null,1],[cn(.14,.5),0xc8a0ff,.58,2.0,0,null,1],[oc(.16),0xff9aff,0,1.3,.3,null,1]]));
+  const fxVoidOrb=mkF(charG,[[oc(.12),0x9a6aff,.8,1.3,0,null,1],[oc(.12),0x9a6aff,-.4,1.0,.7,null,1],[oc(.12),0x9a6aff,-.4,1.6,-.7,null,1]]);
+  [fxNeon,fxSteel,fxKnight,fxVoid,fxVoidOrb].forEach(g=>g.scale.setScalar(29/30));
   const petRoot=new THREE.Group(); petRoot.position.set(.95,1.65,.2); P.add(petRoot);
   const petM={ore:mkF(petRoot,[[oc(.2),0x59b8ff,0,0,0,null,.9],[tor(.26,.025),0xbfe6ff,0,0,0,[1.5708,0,0],.8]]),
     crystal:mkF(petRoot,[[bx(.36,.26,.5),0xb8742a,0,0,0],[bx(.24,.22,.22),0xc88a3a,0,.1,.3],[cn(.06,.14),0xc88a3a,-.07,.26,.3],[cn(.06,.14),0xc88a3a,.07,.26,.3],[oc(.1),0xffb030,0,.22,-.05,null,.9]]),
@@ -215,8 +220,10 @@ function startGame(){
   const applyLook=()=>{ const f=OUTFITS.find(o=>o.id===(profile.fit&&profile.fit.eq))||OUTFITS[0]; sh.color.set(f.shirt); pt.color.set(f.pants); hat.material.color.set(f.hat);
     sh.emissive.set(f.emi?f.emi[0]:0); sh.emissiveIntensity=f.emi?f.emi[1]:0; hat.material.emissive.set(f.fx==='void'?0xff3a6e:0); hat.material.emissiveIntensity=f.fx==='void'?.8:0;
     cape.visible=!!f.cape; if(f.cape){ cape.material.color.set(f.cape); cape.material.emissive.set(f.cape); cape.material.emissiveIntensity=f.capeEmi||0; cape.scale.set(29/30,(f.capeLen||1)*29/30,29/30); cape.position.y=1.7-1.1*(f.capeLen||1)/2; }
-    fxRag.visible=f.fx==='rag'; fxNeon.visible=f.fx==='neon'; fxSteel.visible=f.fx==='steel'; fxKnight.visible=f.fx==='knight'; fxVoid.visible=f.fx==='void'; fxVoidOrb.visible=f.fx==='void';
+    fxNeon.visible=f.fx==='neon'; fxSteel.visible=f.fx==='steel'; fxKnight.visible=f.fx==='knight'; fxVoid.visible=f.fx==='void'; fxVoidOrb.visible=f.fx==='void';
     const v=profile.veh&&profile.veh.eq&&profile.veh.own[profile.veh.eq]?profile.veh.eq:null; vSk.visible=v==='skate'; vBk.visible=v==='bike'; vMt.visible=v==='moto';
+    const RIDE={skate:[.135,0,0],bike:[.18,-.4,1],moto:[.21,-.2,1]},rd=v?RIDE[v]:null; rideV=v; riding=rd&&rd[2]?v:null; charG.position.set(0,rd?rd[0]:0,rd?rd[1]:0);
+    legL.position.set(-.18,riding?.693:.4,riding?.386:0); legR.position.set(.18,riding?.693:.4,riding?.386:0); armL.position.set(-.48,riding?1.423:1.2,riding?.326:0); armR.position.set(.48,riding?1.423:1.2,riding?.326:0);
     const pe=profile.pets&&profile.pets.eq&&profile.pets.own[profile.pets.eq]?profile.pets.eq:null; Object.keys(petM).forEach(k=>{ petM[k].visible=pe===k; }); };
   window.applyLook=applyLook; applyLook();
   S.add(P); P.position.set(profile.x||0,0,profile.z||0);
@@ -358,6 +365,7 @@ function startGame(){
     for(let i=blasts.length-1;i>=0;i--){ const o=blasts[i]; o.t+=dt; const k=Math.min(1,o.t/.35); o.m.scale.set(o.R*k,o.R*k,1); o.m.material.opacity=.7*(1-k); if(o.t>.4){ S.remove(o.m); o.m.material.dispose(); blasts.splice(i,1); } } };
   window.worldInfo=()=>({ores:ores.map(o=>({x:o.x,z:o.z,hp:o.hp,id:o.d.id,req:o.d.reqPick||null})),rocks:rocksAct.map(r=>({x:r.x,z:r.z,off:r.c.off})),bombs:bombs.length});
   window.hpAdd=n=>{ hp=Math.min(hpMaxOf(),hp+n); hpHud(); }; window.hpNow=()=>hp; window.zbInfo=()=>zombies.map(z=>({tier:z.tier,hp:z.hp,max:z.max,dead:z.dead,x:z.x,z:z.z}));
+  window.rideInfo=()=>({lift:charG.position.y,cz:charG.position.z,riding,rideV,legY:legL.position.y,legZ:legL.position.z,legRot:legL.rotation.x,armRot:armL.rotation.x});
   window.pp=()=>[P.position.x,P.position.z];
   window.tp=(x,z)=>{ P.position.set(x,0,z); curCx=Math.floor(x/CS); curCz=Math.floor(z/CS); updateChunks(); addExp(curCx,curCz);
     for(let k=0;k<6;k++) for(const o of obst){ if(o.off) continue; const dx=P.position.x-o.x,dz=P.position.z-o.z,d=Math.hypot(dx,dz)||.01,mn=o.r+.6; if(d<mn){ P.position.x=o.x+dx/d*mn; P.position.z=o.z+dz/d*mn; } }
@@ -403,6 +411,7 @@ function startGame(){
     } else walk*=.9;
     let da=face-P.rotation.y; da=Math.atan2(Math.sin(da),Math.cos(da)); P.rotation.y+=da*Math.min(1,dt*12);
     const sw=Math.sin(walk)*.7; legL.rotation.x=sw;legR.rotation.x=-sw;armL.rotation.x=-sw;armR.rotation.x=sw;
+    if(rideV==='skate'){ legL.rotation.x=legR.rotation.x=0; armL.rotation.x*=.25; armR.rotation.x*=.25; } else if(riding){ legL.rotation.x=legR.rotation.x=-1.3; armL.rotation.x=armR.rotation.x=-1; }
     if(swing>0) armR.rotation.x=-2.2+Math.sin((.35-swing)/.35*Math.PI)*1.6;
     P.position.y=Math.abs(Math.sin(walk))*.05;
     C.position.set(P.position.x+Math.sin(yaw)*Math.cos(pitch)*dist,P.position.y+1.6+Math.sin(pitch)*dist,P.position.z+Math.cos(yaw)*Math.cos(pitch)*dist);
@@ -417,7 +426,7 @@ function startGame(){
     { const dk=Math.min(1,dep/6000),tOn=profile.torchOwn&&profile.torchOn; hemi.intensity=.55*(1-.65*dk); torch.intensity=tOn?1.7:1.3-.65*dk; torch.distance=tOn?26:22-11*dk; S.fog.near=tOn?8:8-4*dk; S.fog.far=tOn?36-4*dk:38-20*dk; if(curBi===5){ hemi.intensity=Math.max(hemi.intensity,.38); torch.intensity+=.3; torch.distance+=5; S.fog.near=Math.max(S.fog.near,tOn?8:6); S.fog.far=Math.max(S.fog.far,tOn?38:30); }
     { const lm=lightMul(); if(lm>1){ hemi.intensity*=lm; torch.intensity*=lm; torch.distance*=lm; S.fog.far*=lm; } if(fishN('turtle')>0){ hemi.intensity=Math.max(hemi.intensity,1.1); torch.intensity=Math.max(torch.intensity,2); torch.distance=Math.max(torch.distance,45); S.fog.near=Math.max(S.fog.near,60); S.fog.far=Math.max(S.fog.far,200); } }
     if(pulseL>0){ hemi.intensity=1.2; torch.intensity=2.2; torch.distance=60; S.fog.near=120; S.fog.far=320; } }
-    if(dep>(profile.maxDepth||0)){ profile.maxDepth=dep; checkAch(); }
+    if(dep>(profile.maxDepth||0)){ profile.maxDepth=dep; profile.deep=[Math.round(P.position.x),Math.round(P.position.z)]; checkAch(); }
     cd-=dt; swing=Math.max(0,swing-dt);
     let tg=null,td=3; for(const o of ores){ if(o.hp<=0){ o.t-=dt; if(o.t<=0){rerollOre(o);o.hp=o.d.hp;o.g.visible=true;o.c.off=false; const q=profile.dug[o.ck]; if(q) delete q[o.i];} continue; }
       const dd=Math.hypot(o.x-P.position.x,o.z-P.position.z); if(dd<td){td=dd;tg=o;} }
@@ -490,11 +499,14 @@ function askPw(){ return new Promise(res=>{ const p=$('pwp'); $('pwi').value='';
 function renderZones(){ const l=$('zonl'); l.innerHTML='';
   const row=(n,sub,label,fn,dis)=>{ const r=document.createElement('div'); r.className='row'; const b=document.createElement('button'); b.className='b'+(dis?' s':''); b.textContent=label; b.disabled=!!dis; b.onclick=fn; r.append(two(n,sub),b); l.append(r); };
   row('出生點','礦坑入口','前往',()=>go(0,0));
-  BIOMES.forEach((b,i)=>{ if(!i) return; const old=profile.zones&&profile.zones[['','crystal','lava','ruins',''][i]],un=(profile.maxDepth||0)>=b.a||old; row(b.n,un?b.a.toLocaleString()+' m 起':'需先抵達 '+b.a.toLocaleString()+' m',un?'前往':'未解鎖',()=>go(b.a+15,0),!un); }); markRows(row); }
+  BIOMES.forEach((b,i)=>{ if(!i) return; const old=profile.zones&&profile.zones[['','crystal','lava','ruins',''][i]],un=(profile.maxDepth||0)>=b.a||old; row(b.n,un?b.a.toLocaleString()+' m 起':'需先抵達 '+b.a.toLocaleString()+' m',un?'前往':'未解鎖',()=>go(b.a+15,0),!un); }); deepRow(row); markRows(row); }
 function markHere(){ if((profile.maxDepth||0)<5000||!window.pp) return; const p=pp(),d=Math.round(Math.hypot(p[0],p[1])); profile.mark={x:p[0],z:p[1],d,bi:biomeIdx(d)}; save(); gt('已記錄目前位置'); renderZones(); }
 function adoptNewer(p){ Object.keys(profile).forEach(k=>delete profile[k]); Object.assign(profile,JSON.parse(JSON.stringify(p))); lrev=profile.rev||0; if(window.tp) window.tp(profile.x||0,profile.z||0); refresh(); gt('偵測到較新的存檔（可能在另一個分頁），已同步，避免進度倒退'); }
 let markArm=0;
 function goMark(){ const m=profile.mark; if((profile.maxDepth||0)<5000||!m) return; if(Date.now()-markArm>4000){ markArm=Date.now(); gt('再按一次「傳送」確認，將回到記錄點'); return; } markArm=0; go(m.x,m.z); }
+let deepArm=0;
+function goDeep(){ const md=profile.maxDepth||0; if(!(md>0)) return; if(Date.now()-deepArm>4000){ deepArm=Date.now(); gt('再按一次「傳送」確認，將前往最深位置'); return; } deepArm=0; const d=profile.deep; if(d&&Math.abs(Math.hypot(d[0],d[1])-md)<60) go(d[0],d[1]); else go(md,0); }
+function deepRow(row){ const md=profile.maxDepth||0; row('⬇ 最深位置',md>0?md.toLocaleString()+' m':'尚未到過',md>0?'傳送':'無',goDeep,!(md>0)); }
 function markRows(row){ if((profile.maxDepth||0)<5000){ row('📍 記錄點','需先抵達 5,000 m','未解鎖',null,true); return; }
   const cur=window.pp?Math.round(Math.hypot(...pp())):0,m=profile.mark;
   row('📍 記錄目前位置','目前 '+cur.toLocaleString()+' m・只能記錄一處','記錄',markHere);
@@ -660,8 +672,11 @@ function upgPet(id){ const p=PETS.find(x=>x.id===id); if(!p||!p.up) return; cons
   profile.coins-=p.up.price; P2.lv[id]=lv+1; petMsg(p.n+' 升到 Lv '+(lv+1),1); refresh(); save(); if(shopTab==='pet') renderShop(); if($('bagp').style.display==='flex') renderBag(); }
 const TORCH_PRICE=35000;
 function shopMsg(t,ok){ const m=$('shopmsg'); m.className='msg'+(ok?' ok':''); m.textContent=t; }
-function fmtP(n){ n=Math.round(n); const a=Math.abs(n); if(a>=1e6){ const r=Math.round(n/1e6*100)/100; if(Math.abs(r*1e6-n)<1) return r+'M'; } else if(a>=1000){ const r=Math.round(n/1000*10)/10; if(Math.abs(r*1000-n)<1) return r+'K'; } return n.toLocaleString(); }
-const lack=p=>'金幣不足，還差 '+fmtP(p-(profile.coins||0))+' 金';
+function fmtP(n,exact){ n=Math.round(n); const a=Math.abs(n);
+  if(a>=1e6){ const r=Math.round(n/1e6*100)/100; if(Math.abs(r*1e6-n)<1) return r+'M'; if(!exact) return (a>=1e7?Math.trunc(n/1e4)/100:Math.trunc(n/1e5)/10)+'M'; }
+  else if(a>=1000){ const r=Math.round(n/1000*10)/10; if(Math.abs(r*1000-n)<1) return r+'K'; if(!exact) return (Math.trunc(n/100)/10)+'K'; }
+  return n.toLocaleString(); }
+const lack=p=>'金幣不足，還差 '+fmtP(p-(profile.coins||0),true)+' 金';
 function pickAct(k){ const own=(profile.owned||['wood']).includes(k.id);
   if(!own){ if(k.need&&(profile.maxDepth||0)<k.need) return shopMsg('需先抵達 '+k.need.toLocaleString()+' m'); if((profile.coins||0)<k.price) return shopMsg(lack(k.price)); profile.coins-=k.price; profile.owned=(profile.owned||['wood']).concat(k.id); shopMsg('已購買 '+k.n,1); }
   else{ profile.pickaxe=k.id; shopMsg('已裝備 '+k.n,1); }
@@ -798,7 +813,6 @@ $('rn').oninput=()=>{ $('imp').style.display=((localMode||!!SB_URL)&&$('rn').val
 document.addEventListener('gesturestart',e=>e.preventDefault());
 let lastTap=0; document.addEventListener('touchend',e=>{ const t=e.target; if(['cv','joy','knob','dig','tip'].includes(t.id)){ const n=Date.now(); if(n-lastTap<350) e.preventDefault(); lastTap=n; } },{passive:false});
 const OUTFITS=[{id:'default',n:'預設工作服',price:0,shirt:0x3b6fd6,pants:0x3a3a4a,hat:0xf5b942},
-{id:'rag',n:'泥巴麻布裝',price:4000,shirt:0x6b5a3a,pants:0x4a3d28,hat:0x7a6a4a,fx:'rag'},
 {id:'neon',n:'螢光工地裝',price:28000,shirt:0xd7ff00,pants:0xff6600,hat:0xff00cc,fx:'neon'},
 {id:'steel',n:'鋼鐵礦工服',price:260000,shirt:0x8d9bb0,pants:0x2a2f3a,hat:0xd0d8e0,fx:'steel'},
 {id:'knight',n:'黑曜騎士裝',price:1800000,shirt:0x14141f,pants:0x0b0b14,hat:0x2a1a4a,fx:'knight',cape:0x2a1a4a,capeLen:1,emi:[0x5a2aff,.35]},
